@@ -32,6 +32,9 @@ export default function App() {
   const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentWordIdx, setCurrentWordIdx] = useState(0);
+  const slogans = ["Elegance.", "Presence.", "Power."];
 
   const navigation = [
     {
@@ -85,9 +88,88 @@ export default function App() {
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
+  useEffect(() => {
+    // Set fixed 30 second timer for testing
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 30000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      const sloganInterval = setInterval(() => {
+        setCurrentWordIdx((prev) => (prev + 1) % slogans.length);
+      }, 1500);
+      return () => clearInterval(sloganInterval);
+    }
+  }, [isLoading, slogans.length]);
+
   return (
-    <div className="font-sans text-stone-900 bg-[#fcfcf9] min-h-screen">
-      {/* Side Navigation for Mobile */}
+    <AnimatePresence>
+      {isLoading ? (
+        <motion.div
+          key="preloader"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, filter: "blur(10px)" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-[1000] bg-[#fcfcf9] flex flex-col items-center justify-center p-8 overflow-hidden"
+        >
+          {/* Logo container with heartbeat pulse */}
+          <motion.div
+            animate={{ 
+              scale: [1, 1.08, 1, 1.05, 1],
+            }}
+            transition={{ 
+              duration: 2.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              times: [0, 0.1, 0.2, 0.3, 1]
+            }}
+            className="relative w-48 md:w-64 aspect-square flex items-center justify-center mb-16"
+          >
+            <img 
+              src="https://www.wansatibrands.co.za/wp-content/uploads/2024/11/WANSATI-LOGO-MARK-PNG@300x-1.png" 
+              alt="Wansati Brands" 
+              className="w-full h-full object-contain relative z-10 drop-shadow-2xl"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+          
+          <div className="flex flex-col items-center">
+            <AnimatePresence mode="wait">
+              <motion.h2
+                key={currentWordIdx}
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 1.05, y: -10 }}
+                transition={{ 
+                  duration: 0.8,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+                className="font-serif text-3xl md:text-4xl text-stone-900 tracking-wider mb-2 font-light"
+              >
+                {slogans[currentWordIdx]}
+              </motion.h2>
+            </AnimatePresence>
+            
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: 40 }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="h-[1px] bg-stone-300 mt-4"
+            />
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="main-content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="font-sans text-stone-900 bg-[#fcfcf9] min-h-screen"
+        >
+          {/* Side Navigation for Mobile */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
@@ -436,21 +518,11 @@ export default function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6"
           >
             {[
               { 
-                title: 'Fragrance', 
-                img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?w=2047&ssl=1',
-                srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?w=2047&ssl=1 2047w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=819%2C1024&ssl=1 819w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=1228%2C1536&ssl=1 1228w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=1638%2C2048&ssl=1 1638w'
-              },
-              { 
-                title: 'Body Care', 
-                img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?w=1181&ssl=1',
-                srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?w=1181&ssl=1 1181w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=800%2C800&ssl=1 800w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=150%2C150&ssl=1 150w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=300%2C300&ssl=1 300w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=768%2C768&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=1024%2C1024&ssl=1 1024w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=600%2C600&ssl=1 600w'
-              },
-              { 
-                title: 'Dresses', 
+                title: 'Women', 
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?w=864&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?w=864&ssl=1 864w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=819%2C1024&ssl=1 819w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=1229%2C1536&ssl=1 1229w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=1639%2C2048&ssl=1 1639w'
               },
@@ -458,6 +530,20 @@ export default function App() {
                 title: 'Girls', 
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?w=864&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?w=864&ssl=1 864w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?resize=819%2C1024&ssl=1 819w'
+              },
+              { 
+                title: 'Two-piece set', 
+                img: 'https://www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5984.jpg',
+              },
+              { 
+                title: 'Fragrances', 
+                img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?w=2047&ssl=1',
+                srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?w=2047&ssl=1 2047w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=819%2C1024&ssl=1 819w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=1228%2C1536&ssl=1 1228w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=1638%2C2048&ssl=1 1638w'
+              },
+              { 
+                title: 'Body Care', 
+                img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?w=1181&ssl=1',
+                srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?w=1181&ssl=1 1181w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=800%2C800&ssl=1 800w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=150%2C150&ssl=1 150w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=300%2C300&ssl=1 300w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=768%2C768&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=1024%2C1024&ssl=1 1024w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=600%2C600&ssl=1 600w'
               },
               { 
                 title: 'Home Fragrance', 
@@ -482,9 +568,13 @@ export default function App() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                    <button className="bg-white/95 text-stone-900 px-3 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors shadow-sm whitespace-nowrap">
-                      Shop {cat.title}
-                    </button>
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-white/95 text-stone-900 px-3 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors shadow-sm whitespace-nowrap"
+                    >
+                      Shop Now
+                    </motion.button>
                   </div>
                 </div>
                 <div className="py-4 w-full flex items-center justify-center">
@@ -626,8 +716,9 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors">
-                        Select Option
+                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        Select Options
                       </button>
                     </div>
                   </div>
@@ -680,8 +771,9 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors">
-                        Select Option
+                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        Select Options
                       </button>
                     </div>
                   </div>
@@ -749,8 +841,9 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors">
-                        Select Option
+                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        Select Options
                       </button>
                     </div>
                   </div>
@@ -990,11 +1083,21 @@ export default function App() {
 
           </div>
 
-          <div className="border-t border-stone-800 pt-8 flex flex-col items-center justify-center text-stone-500 text-xs">
+          <div className="border-t border-stone-800 pt-8 flex flex-col items-center justify-center text-stone-500 text-xs space-y-2">
             <p>© 2024 Wansati Brands. All rights reserved.</p>
+            <p className="flex items-center gap-1.5">
+              designed by 
+              <a href="https://www.slotly.co.za/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center group">
+                <span className="text-blue-500 font-bold tracking-tighter">&lt;/&gt;</span>
+                <span className="text-white ml-1.5">slotly</span>
+                <span className="text-blue-500">Dev</span>
+              </a>
+            </p>
           </div>
         </div>
       </footer>
-    </div>
+    </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
