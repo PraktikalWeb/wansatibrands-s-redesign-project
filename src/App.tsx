@@ -88,7 +88,7 @@ export default function App() {
 
   useEffect(() => {
     const startTime = Date.now();
-    const MINIMUM_LOAD_TIME = 5000;
+    const MINIMUM_LOAD_TIME = 3000;
 
     const handleLoad = () => {
       const elapsedTime = Date.now() - startTime;
@@ -113,9 +113,9 @@ export default function App() {
         <motion.div
           key="preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: "blur(10px)" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[1000] bg-[#fcfcf9] flex flex-col items-center justify-center p-8 overflow-hidden"
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="fixed inset-0 z-[1000] bg-[#c2a453] flex flex-col items-center justify-center p-8 overflow-hidden"
         >
           {/* Logo container with heartbeat pulse */}
           <motion.div
@@ -156,11 +156,8 @@ export default function App() {
           </div>
         </motion.div>
       ) : (
-        <motion.div
+        <div
           key="main-content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
           className="font-sans text-stone-900 bg-[#fcfcf9] min-h-screen"
         >
           {/* Side Navigation for Mobile */}
@@ -1090,7 +1087,7 @@ export default function App() {
           </div>
         </div>
       </footer>
-    </motion.div>
+    </div>
       )}
     </AnimatePresence>
   );
