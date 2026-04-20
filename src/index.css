@@ -6,6 +6,10 @@
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
 }
 
+html {
+  font-size: 110%; /* Slightly larger base to increase all text globally */
+}
+
 body {
   background-color: #fcfcf9; /* Subtle off-white to match the design */
 }
