@@ -87,23 +87,23 @@ export default function App() {
   }, [heroImages.length]);
 
   useEffect(() => {
+    const startTime = Date.now();
+    const MINIMUM_LOAD_TIME = 5000;
+
     const handleLoad = () => {
-      // Small delay after load to ensure smooth transition
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, MINIMUM_LOAD_TIME - elapsedTime);
+
       setTimeout(() => {
         setIsLoading(false);
-      }, 800);
+      }, remainingTime);
     };
 
     if (document.readyState === 'complete') {
       handleLoad();
     } else {
       window.addEventListener('load', handleLoad);
-      // Fallback in case load takes too long
-      const fallback = setTimeout(handleLoad, 10000);
-      return () => {
-        window.removeEventListener('load', handleLoad);
-        clearTimeout(fallback);
-      };
+      return () => window.removeEventListener('load', handleLoad);
     }
   }, []);
 
