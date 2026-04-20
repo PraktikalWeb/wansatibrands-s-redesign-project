@@ -128,7 +128,7 @@ export default function App() {
               ease: "easeInOut",
               times: [0, 0.1, 0.2, 0.3, 1]
             }}
-            className="relative w-48 md:w-64 aspect-square flex items-center justify-center mb-16"
+            className="relative w-40 md:w-56 aspect-square flex items-center justify-center mb-16"
           >
             <img 
               src="https://www.wansatibrands.co.za/wp-content/uploads/2024/11/WANSATI-LOGO-MARK-PNG@300x-1.png" 
@@ -138,22 +138,21 @@ export default function App() {
             />
           </motion.div>
           
-          <div className="flex flex-col items-center">
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="font-serif text-3xl md:text-5xl text-stone-900 tracking-wider mb-2 font-light text-center"
-            >
-              Elegance. Presence. Power.
-            </motion.h2>
-            
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: 60 }}
-              transition={{ duration: 4, repeat: Infinity }}
-              className="h-[1px] bg-stone-300 mt-6"
-            />
+          <div className="flex items-center space-x-2">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0.3 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  delay: i * 0.2,
+                }}
+                className="w-1 h-1 bg-black"
+              />
+            ))}
           </div>
         </motion.div>
       ) : (
