@@ -33,8 +33,6 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentWordIdx, setCurrentWordIdx] = useState(0);
-  const slogans = ["Elegance.", "Presence.", "Power."];
 
   const navigation = [
     {
@@ -89,21 +87,25 @@ export default function App() {
   }, [heroImages.length]);
 
   useEffect(() => {
-    // Set fixed 30 second timer for testing
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 30000);
-    return () => clearTimeout(timer);
-  }, []);
+    const handleLoad = () => {
+      // Small delay after load to ensure smooth transition
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 800);
+    };
 
-  useEffect(() => {
-    if (isLoading) {
-      const sloganInterval = setInterval(() => {
-        setCurrentWordIdx((prev) => (prev + 1) % slogans.length);
-      }, 1500);
-      return () => clearInterval(sloganInterval);
+    if (document.readyState === 'complete') {
+      handleLoad();
+    } else {
+      window.addEventListener('load', handleLoad);
+      // Fallback in case load takes too long
+      const fallback = setTimeout(handleLoad, 10000);
+      return () => {
+        window.removeEventListener('load', handleLoad);
+        clearTimeout(fallback);
+      };
     }
-  }, [isLoading, slogans.length]);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -137,27 +139,20 @@ export default function App() {
           </motion.div>
           
           <div className="flex flex-col items-center">
-            <AnimatePresence mode="wait">
-              <motion.h2
-                key={currentWordIdx}
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 1.05, y: -10 }}
-                transition={{ 
-                  duration: 0.8,
-                  ease: [0.22, 1, 0.36, 1]
-                }}
-                className="font-serif text-3xl md:text-4xl text-stone-900 tracking-wider mb-2 font-light"
-              >
-                {slogans[currentWordIdx]}
-              </motion.h2>
-            </AnimatePresence>
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="font-serif text-3xl md:text-5xl text-stone-900 tracking-wider mb-2 font-light text-center"
+            >
+              Elegance. Presence. Power.
+            </motion.h2>
             
             <motion.div 
               initial={{ width: 0 }}
-              animate={{ width: 40 }}
+              animate={{ width: 60 }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="h-[1px] bg-stone-300 mt-4"
+              className="h-[1px] bg-stone-300 mt-6"
             />
           </div>
         </motion.div>
