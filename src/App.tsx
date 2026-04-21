@@ -24,10 +24,10 @@ import {
 
 export default function App() {
   const heroImages = [
-    "https://hbdxnnuzbdbcyxrgfvtd.supabase.co/storage/v1/object/public/kasipoint/d851e4b5-2db7-4364-b117-b2fe50376a23/gallery/gallery_1776644175919_ChatGPT_Image_Apr_20__2026__02_15_37_AM.png",
-    "https://hbdxnnuzbdbcyxrgfvtd.supabase.co/storage/v1/object/public/kasipoint/d851e4b5-2db7-4364-b117-b2fe50376a23/gallery/gallery_1776644207767_ChatGPT_Image_Apr_20__2026__02_13_17_AM.png",
-    "https://hbdxnnuzbdbcyxrgfvtd.supabase.co/storage/v1/object/public/kasipoint/d851e4b5-2db7-4364-b117-b2fe50376a23/gallery/gallery_1776644236859_ChatGPT_Image_Apr_20__2026__02_09_49_AM.png",
-    "https://hbdxnnuzbdbcyxrgfvtd.supabase.co/storage/v1/object/public/kasipoint/d851e4b5-2db7-4364-b117-b2fe50376a23/gallery/gallery_1776644288555_ChatGPT_Image_Apr_20__2026__01_20_39_AM.png"
+    "https://www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5984.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/12/DSC_6055-1.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6417-scaled.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6469-scaled.jpg"
   ];
 
   const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
