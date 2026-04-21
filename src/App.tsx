@@ -19,6 +19,7 @@ import {
   Facebook,
   Instagram,
   Twitter,
+  ArrowRight,
 } from 'lucide-react';
 
 export default function App() {
@@ -117,6 +118,15 @@ export default function App() {
           transition={{ duration: 0.8, ease: "easeInOut" }}
           className="fixed inset-0 z-[1000] bg-[#c2a453] flex flex-col items-center justify-center p-8 overflow-hidden"
         >
+          {/* Subtle Texture Overlay */}
+          <div 
+            className="absolute inset-0 opacity-[0.15] mix-blend-multiply pointer-events-none"
+            style={{ 
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+              backgroundSize: '200px 200px'
+            }}
+          />
+          
           {/* Logo container with heartbeat pulse */}
           <motion.div
             animate={{ 
@@ -261,8 +271,8 @@ export default function App() {
       </AnimatePresence>
 
       {/* Top Banner */}
-      <div className="bg-[#f2efe9] text-xs py-1.5 px-4 flex justify-center items-center sm:px-8">
-        <div className="text-center font-medium tracking-wide text-stone-600">
+      <div className="bg-transparent text-xs py-1.5 px-4 flex justify-center items-center sm:px-8 border-b border-transparent">
+        <div className="text-center font-bold tracking-[0.2em] uppercase text-[#a89279]">
           Free Delivery over R1000
         </div>
       </div>
@@ -324,7 +334,7 @@ export default function App() {
               placeholder="Search"
               className="w-full pl-4 pr-10 py-1.5 border border-stone-300 text-sm focus:outline-none focus:border-stone-400 placeholder:text-stone-400"
             />
-            <button className="absolute right-0 top-0 bottom-0 bg-stone-900 text-white px-3 flex items-center justify-center">
+            <button className="absolute right-0 top-0 bottom-0 bg-stone-900 text-white px-4 flex items-center justify-center hover:bg-black transition-colors">
               <Search size={16} />
             </button>
           </div>
@@ -480,7 +490,7 @@ export default function App() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-white/95 text-stone-900 px-8 py-3.5 text-xs font-bold tracking-[0.2em] uppercase hover:bg-stone-900 hover:text-white transition-all backdrop-blur-sm shadow-xl"
+                className="btn-gold-textured px-8 py-3.5 text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-xl"
               >
                 Shop Now
               </motion.button>
@@ -562,7 +572,7 @@ export default function App() {
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-white/95 text-stone-900 px-3 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors shadow-sm whitespace-nowrap"
+                      className="btn-gold-textured px-3 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs font-bold tracking-widest uppercase shadow-sm whitespace-nowrap"
                     >
                       Shop Now
                     </motion.button>
@@ -604,7 +614,7 @@ export default function App() {
                 <h3 className="font-serif text-2xl mb-4 drop-shadow-sm">
                   African Prints
                 </h3>
-                <button className="bg-white text-stone-900 px-6 py-2 text-xs font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors self-start">
+                <button className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start">
                   Explore
                 </button>
               </div>
@@ -624,7 +634,7 @@ export default function App() {
                 <h3 className="font-serif text-2xl mb-4 drop-shadow-sm">
                   Exclusive Dress
                 </h3>
-                <button className="bg-white text-stone-900 px-6 py-2 text-xs font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors self-start">
+                <button className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start">
                   Explore
                 </button>
               </div>
@@ -644,7 +654,7 @@ export default function App() {
                 <h3 className="font-serif text-2xl mb-4 drop-shadow-sm">
                   Men Wear
                 </h3>
-                <button className="bg-white text-stone-900 px-6 py-2 text-xs font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors self-start">
+                <button className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start">
                   Explore
                 </button>
               </div>
@@ -667,8 +677,8 @@ export default function App() {
               <h3 className="font-serif text-2xl text-stone-800 tracking-tight">
                 Dresses
               </h3>
-              <a href="#" className="hidden sm:block text-sm font-semibold tracking-wider text-stone-600 hover:text-stone-900 transition-colors uppercase">
-                Explore Dresses
+              <a href="#" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
+                Explore Dresses <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-x-8 md:gap-y-12">
@@ -707,7 +717,7 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                      <button className="btn-gold-textured w-full py-3 text-[10px] font-bold tracking-widest uppercase flex items-center justify-center gap-2">
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Select Options
                       </button>
@@ -728,8 +738,8 @@ export default function App() {
               <h3 className="font-serif text-2xl text-stone-800 tracking-tight">
                 Men
               </h3>
-              <a href="#" className="hidden sm:block text-sm font-semibold tracking-wider text-stone-600 hover:text-stone-900 transition-colors uppercase">
-                Explore More
+              <a href="#" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
+                Explore More <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 md:gap-x-6 md:gap-y-12">
@@ -762,7 +772,7 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                      <button className="btn-gold-textured w-full py-3 text-[10px] font-bold tracking-widest uppercase flex items-center justify-center gap-2">
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Select Options
                       </button>
@@ -783,8 +793,8 @@ export default function App() {
               <h3 className="font-serif text-2xl text-stone-800 tracking-tight">
                 Fragrances
               </h3>
-              <a href="https://www.wansatibrands.co.za/shop/fragrances/" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-sm font-semibold tracking-wider text-stone-600 hover:text-stone-900 transition-colors uppercase">
-                Explore Fragrances
+              <a href="https://www.wansatibrands.co.za/shop/fragrances/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
+                Explore Fragrances <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-x-8 md:gap-y-12">
@@ -832,7 +842,7 @@ export default function App() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="w-full bg-white/90 backdrop-blur-sm text-stone-900 py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                      <button className="btn-gold-textured w-full py-3 text-[10px] font-bold tracking-widest uppercase flex items-center justify-center gap-2">
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Select Options
                       </button>
@@ -963,7 +973,7 @@ export default function App() {
                       </blockquote>
                     </motion.div>
                     <div className="pt-4">
-                      <button className="bg-[#1c1a17] text-white px-10 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-stone-700 transition-colors shadow-lg">
+                      <button className="btn-gold-textured px-10 py-4 text-xs font-bold tracking-[0.2em] uppercase shadow-lg">
                         Read More
                       </button>
                     </div>
@@ -998,7 +1008,7 @@ export default function App() {
               />
               <button
                 type="submit"
-                className="bg-[#1c1a17] text-white px-8 py-3 text-xs font-bold tracking-[0.15em] uppercase hover:bg-stone-700 transition-colors sm:border-l-0"
+                className="bg-[#1c1a17] text-white px-8 py-3 text-xs font-bold tracking-[0.15em] uppercase hover:bg-stone-800 transition-colors sm:border-l-0"
               >
                 Subscribe
               </button>
