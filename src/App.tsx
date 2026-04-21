@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Search,
@@ -34,6 +34,60 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const scrollStateRef = useRef({ isDown: false, lastToggleTime: 0 });
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let scrollUpDistance = 0;
+    let scrollDownDistance = 0;
+    let ticking = false;
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = Math.max(0, window.scrollY);
+          setIsScrolled(currentScrollY > 20);
+          
+          const now = Date.now();
+          // Provide a 450ms cooldown after the menu toggles to ignore browser layout-shift scroll events
+          if (now - scrollStateRef.current.lastToggleTime > 450) {
+            
+            if (currentScrollY > lastScrollY) {
+              // Scrolling down
+              scrollUpDistance = 0; // Reset upward scroll tracking
+              scrollDownDistance += (currentScrollY - lastScrollY);
+              
+              // Require 40px of intentional downward scroll so that a trackpad "recoil" doesn't close it instantly
+              if (scrollDownDistance > 40 && currentScrollY > 80 && !scrollStateRef.current.isDown) {
+                scrollStateRef.current.isDown = true;
+                scrollStateRef.current.lastToggleTime = now;
+                setIsScrollingDown(true);
+              }
+            } else if (currentScrollY < lastScrollY) {
+              // Scrolling up
+              scrollDownDistance = 0; // Reset downward scroll tracking
+              scrollUpDistance += (lastScrollY - currentScrollY);
+              
+              if ((scrollUpDistance > 60 || currentScrollY < 20) && scrollStateRef.current.isDown) {
+                scrollStateRef.current.isDown = false;
+                scrollStateRef.current.lastToggleTime = now;
+                setIsScrollingDown(false);
+              }
+            }
+          }
+          
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navigation = [
     {
@@ -271,14 +325,14 @@ export default function App() {
       </AnimatePresence>
 
       {/* Top Banner */}
-      <div className="bg-transparent text-xs py-1.5 px-4 flex justify-center items-center sm:px-8 border-b border-transparent">
-        <div className="text-center font-bold tracking-[0.2em] uppercase text-[#a89279]">
+      <div className="bg-white/30 backdrop-blur-sm text-xs py-1.5 px-4 flex justify-center items-center sm:px-8 border-b border-transparent">
+        <div className="text-center font-bold tracking-[0.2em] uppercase text-[#8b765e]">
           Free Delivery over R1000
         </div>
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-100 flex flex-col items-center shadow-sm">
+      <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}>
         {/* Mobile Search Overlay */}
         <AnimatePresence>
           {isSearchOpen && (
@@ -308,7 +362,7 @@ export default function App() {
         </AnimatePresence>
 
         {/* Top Row: Logo, Search, Icons */}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-3.5 md:py-4 flex items-center justify-between">
+        <div className={`w-full max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between transition-all duration-300 ${isScrolled ? 'py-2 md:py-2.5' : 'py-3.5 md:py-4'}`}>
           {/* Mobile Hamburger (Visible on Tablet/Mobile) */}
           <button 
             onClick={() => setIsMenuOpen(true)}
@@ -318,11 +372,11 @@ export default function App() {
           </button>
 
           {/* Logo */}
-          <div className="flex-shrink-0 md:flex-initial">
+          <div className="flex-shrink-0 md:flex-initial transition-transform duration-300">
             <img 
               src="https://www.wansatibrands.co.za/wp-content/uploads/2024/09/Wansati-Brands-Logo-e1758822665346.png" 
               alt="Wansati Brands Logo" 
-              className="h-8 md:h-10 w-auto object-contain mx-auto"
+              className={`w-auto object-contain mx-auto transition-all duration-300 ${isScrolled ? 'h-6 md:h-8' : 'h-8 md:h-10'}`}
               referrerPolicy="no-referrer"
             />
           </div>
@@ -388,48 +442,59 @@ export default function App() {
         </div>
 
         {/* Main Nav */}
-        <nav className="hidden w-full max-w-5xl mx-auto lg:flex items-center justify-center space-x-12 py-3 font-semibold text-sm tracking-widest text-stone-800 uppercase">
-          {navigation.map((item) => (
-            <div key={item.title} className="relative group py-2">
-              <a 
-                href="#" 
-                className={`transition-colors flex items-center gap-1 ${
-                  item.highlight ? 'text-red-600 hover:text-red-500' : 'hover:text-stone-500'
-                }`}
-              >
-                {item.title}
-              </a>
-              
-              {item.subcategories.length > 0 && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
-                  <div className="bg-white min-w-[240px] border border-stone-100 shadow-xl p-5 backdrop-blur-sm">
-                    <div className="text-[10px] text-stone-400 mb-4 border-b border-stone-50 pb-2 tracking-[0.2em] font-bold">
-                      Explore {item.title}
-                    </div>
-                    <ul className="space-y-4">
-                      {item.subcategories.map((sub) => (
-                        <li key={sub.name}>
-                          <a 
-                            href="#" 
-                            className="flex items-center justify-between group/sub text-stone-600 hover:text-stone-900 transition-colors"
-                          >
-                            <span className="text-[11px] font-bold tracking-widest group-hover/sub:translate-x-1 transition-transform">{sub.name}</span>
-                            <span className="text-[10px] text-stone-300 font-mono tracking-tighter">({sub.units})</span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-6 pt-4 border-t border-stone-100">
-                      <a href="#" className="text-[9px] font-bold text-stone-400 hover:text-stone-900 transition-colors tracking-[0.1em] underline underline-offset-4">
-                        View All {item.title}
-                      </a>
+        <motion.div
+          initial={false}
+          animate={{
+            height: isScrollingDown ? 0 : 'auto',
+            opacity: isScrollingDown ? 0 : 1,
+          }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          className="w-full flex justify-center"
+          style={{ overflow: isScrollingDown ? 'hidden' : 'visible' }}
+        >
+          <nav className={`hidden w-full max-w-5xl mx-auto lg:flex items-center justify-center space-x-12 font-semibold text-sm tracking-widest text-stone-800 uppercase transition-all duration-300 ${isScrolled ? 'py-1.5 opacity-90' : 'py-3 opacity-100'}`}>
+            {navigation.map((item) => (
+              <div key={item.title} className="relative group py-2">
+                <a 
+                  href="#" 
+                  className={`transition-colors flex items-center gap-1 ${
+                    item.highlight ? 'text-red-600 hover:text-red-500' : 'hover:text-stone-500'
+                  }`}
+                >
+                  {item.title}
+                </a>
+                
+                {item.subcategories.length > 0 && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
+                    <div className="bg-white min-w-[240px] border border-stone-100 shadow-xl p-5 backdrop-blur-sm">
+                      <div className="text-[10px] text-stone-400 mb-4 border-b border-stone-50 pb-2 tracking-[0.2em] font-bold">
+                        Explore {item.title}
+                      </div>
+                      <ul className="space-y-4">
+                        {item.subcategories.map((sub) => (
+                          <li key={sub.name}>
+                            <a 
+                              href="#" 
+                              className="flex items-center justify-between group/sub text-stone-600 hover:text-stone-900 transition-colors"
+                            >
+                              <span className="text-[11px] font-bold tracking-widest group-hover/sub:translate-x-1 transition-transform">{sub.name}</span>
+                              <span className="text-[10px] text-stone-300 font-mono tracking-tighter">({sub.units})</span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-6 pt-4 border-t border-stone-100">
+                        <a href="#" className="text-[9px] font-bold text-stone-400 hover:text-stone-900 transition-colors tracking-[0.1em] underline underline-offset-4">
+                          View All {item.title}
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
+                )}
+              </div>
+            ))}
+          </nav>
+        </motion.div>
       </header>
 
       <main>
@@ -678,7 +743,9 @@ export default function App() {
                 Dresses
               </h3>
               <a href="#" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
-                Explore Dresses <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                <span className="sm:hidden">Explore</span>
+                <span className="hidden sm:inline">Explore Dresses</span>
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-x-8 md:gap-y-12">
@@ -739,7 +806,9 @@ export default function App() {
                 Men
               </h3>
               <a href="#" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
-                Explore More <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                <span className="sm:hidden">Explore</span>
+                <span className="hidden sm:inline">Explore More</span>
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 md:gap-x-6 md:gap-y-12">
@@ -794,7 +863,9 @@ export default function App() {
                 Fragrances
               </h3>
               <a href="https://www.wansatibrands.co.za/shop/fragrances/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
-                Explore Fragrances <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                <span className="sm:hidden">Explore</span>
+                <span className="hidden sm:inline">Explore Fragrances</span>
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-x-8 md:gap-y-12">
