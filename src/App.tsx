@@ -24,10 +24,10 @@ import {
 
 export default function App() {
   const heroImages = [
-    "https://www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5984.jpg",
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/12/DSC_6055-1.jpg",
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6417-scaled.jpg",
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6469-scaled.jpg"
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6417-1-scaled.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6469-scaled.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6315-scaled.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/12/DSC_6029.jpg"
   ];
 
   const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
