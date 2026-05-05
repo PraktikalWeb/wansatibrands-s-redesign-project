@@ -130,6 +130,7 @@ type SingleProductPageProps = {
     numericPrice: number;
     image: string;
     imageFit?: ImageFit;
+    path?: string;
   }) => void;
 };
 
@@ -754,6 +755,7 @@ function ProductCard({
     numericPrice: number;
     image: string;
     imageFit?: ImageFit;
+    path?: string;
   }) => void;
 }) {
   const showSale = typeof product.salePrice === 'number' && product.salePrice < product.price;
@@ -801,9 +803,10 @@ function ProductCard({
               numericPrice: resolvedPrice,
               image: product.gallery[0]?.src ?? '',
               imageFit: product.gallery[0]?.fit,
+              path: productPath(product.slug),
             });
           }}
-          className="absolute right-3 top-3 z-10 translate-y-1 bg-white/95 p-1.5 text-stone-400 opacity-0 shadow-sm transition-all duration-300 hover:text-red-500 group-hover:translate-y-0 group-hover:opacity-100"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 translate-y-1 items-center justify-center rounded-full bg-white/95 text-stone-400 opacity-0 shadow-sm ring-1 ring-stone-200/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:text-red-500 group-hover:translate-y-0 group-hover:opacity-100"
           aria-label={`Add ${product.title} to wishlist`}
         >
           <Heart className="h-4 w-4" strokeWidth={1.5} />
@@ -1237,6 +1240,7 @@ export default function SingleProductPage({
       numericPrice: resolvedPrice,
       image: currentImage.src,
       imageFit: currentImage.fit,
+      path: productPath(currentProduct.slug),
     });
     setFeedbackMessage(`${currentProduct.title} saved to wishlist.`);
     window.setTimeout(() => setFeedbackMessage(null), 2500);

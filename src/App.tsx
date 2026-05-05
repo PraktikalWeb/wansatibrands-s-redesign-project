@@ -45,6 +45,7 @@ type WishlistItem = {
   numericPrice: number;
   image: string;
   imageFit?: 'cover' | 'contain';
+  path?: string;
 };
 
 type CartItem = {
@@ -73,6 +74,7 @@ export default function App() {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [activeSidePanel, setActiveSidePanel] = useState<'wishlist' | 'cart' | null>(null);
   const [showCoupon, setShowCoupon] = useState(false);
+  const [expandedMobileCategories, setExpandedMobileCategories] = useState<string[]>([]);
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
     {
       id: 'wish-1',
@@ -80,6 +82,7 @@ export default function App() {
       priceLabel: 'R2,200.00',
       numericPrice: 2200,
       image: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/12/DSC_6043-1.jpg?fit=864%2C1080&ssl=1',
+      path: '/product/melania-dress',
     },
     {
       id: 'wish-2',
@@ -88,6 +91,7 @@ export default function App() {
       numericPrice: 150,
       image: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2024/03/Men-Oud-Fleur-Photoroom.png?fit=800%2C800&ssl=1',
       imageFit: 'contain',
+      path: '/product/oud-fleur-inspired',
     },
   ]);
   const [cartItems, setCartItems] = useState<CartItem[]>([
@@ -262,6 +266,7 @@ export default function App() {
 
   const isCartPanel = activeSidePanel === 'cart';
   const isCartPage = currentPath === '/cart';
+  const isWishlistPage = currentPath === '/wishlist';
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
   const displayedItems = isCartPanel ? cartItems : wishlistItems;
@@ -269,6 +274,7 @@ export default function App() {
   const cartSubtotal = cartItems.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
   const cartDeliveryFee = cartItems.length === 0 ? 0 : (cartSubtotal >= 1000 ? 0 : 99);
   const cartTotal = cartSubtotal + cartDeliveryFee;
+  const wishlistEstimatedValue = wishlistItems.reduce((total, item) => total + item.numericPrice, 0);
   const returnPolicyUrl = 'https://www.wansatibrands.co.za/refund_returns/';
   const yocoAcceptedCards = [
     { name: 'Visa', logo: yocoVisaLogo, className: 'h-4 sm:h-5' },
@@ -346,6 +352,15 @@ export default function App() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+  const parseProductCardPrice = (priceLabel: string) => {
+    const match = priceLabel.match(/\d[\d,]*(?:\.\d{2})?/);
+    return match ? Number(match[0].replace(/,/g, '')) : 0;
+  };
+  const openWishlistItem = (item: WishlistItem) => {
+    if (item.path) {
+      navigateTo(item.path);
+    }
+  };
 
   const navigateTo = (path: string) => {
     const nextPath = path || '/';
@@ -359,6 +374,14 @@ export default function App() {
     setIsMenuOpen(false);
     setIsSearchOpen(false);
     window.scrollTo(0, 0);
+  };
+
+  const toggleMobileCategory = (title: string) => {
+    setExpandedMobileCategories((prev) => (
+      prev.includes(title)
+        ? prev.filter((itemTitle) => itemTitle !== title)
+        : [...prev, title]
+    ));
   };
 
   const getProductCardPath = (title: string) => productPagePathByTitle[title] ?? '/product/wansati-signature-set';
@@ -406,6 +429,38 @@ export default function App() {
     });
   };
 
+  const handleAddAllWishlistToCart = () => {
+    if (wishlistItems.length === 0) return;
+
+    setCartItems((prev) => {
+      const nextItems = [...prev];
+
+      wishlistItems.forEach((item) => {
+        const existingIndex = nextItems.findIndex((cartItem) => cartItem.title === item.title);
+
+        if (existingIndex >= 0) {
+          nextItems[existingIndex] = {
+            ...nextItems[existingIndex],
+            quantity: nextItems[existingIndex].quantity + 1,
+          };
+          return;
+        }
+
+        nextItems.push({
+          id: `cart-${item.id}`,
+          title: item.title,
+          priceLabel: item.priceLabel,
+          image: item.image,
+          quantity: 1,
+          unitPrice: item.numericPrice,
+          imageFit: item.imageFit,
+        });
+      });
+
+      return nextItems;
+    });
+  };
+
   const handleAddProductToCart = (item: {
     id: string;
     title: string;
@@ -449,6 +504,7 @@ export default function App() {
     numericPrice: number;
     image: string;
     imageFit?: 'cover' | 'contain';
+    path?: string;
   }) => {
     setWishlistItems((prev) => {
       const exists = prev.some((wishlistItem) => wishlistItem.id === item.id);
@@ -465,6 +521,7 @@ export default function App() {
           numericPrice: item.numericPrice,
           image: item.image,
           imageFit: item.imageFit,
+          path: item.path,
         },
       ];
     });
@@ -667,51 +724,74 @@ export default function App() {
                       </div>
                     )
                   ) : wishlistItems.length > 0 ? (
-                    <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col">
-                      {wishlistItems.map((item) => (
-                        <div key={item.id} className="flex gap-4 border-b border-stone-100 pb-4 mb-4">
-                          <div className="w-20 h-24 relative group cursor-pointer bg-white">
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className={`absolute inset-0 w-full h-full ${item.imageFit === 'contain' ? 'object-contain p-2' : 'object-cover'} transition-transform duration-700 group-hover:scale-105`}
-                              referrerPolicy="no-referrer"
-                            />
-                          </div>
-                          <div className="flex-1 flex flex-col">
-                            <div className="flex justify-between items-start mb-1 gap-3">
-                              <h3 className="font-medium text-sm text-stone-900 leading-tight">{item.title}</h3>
+                    <div className="flex flex-1 flex-col min-h-0">
+                      <div className="flex-1 overflow-y-auto px-5 py-4">
+                        {wishlistItems.map((item) => (
+                          <div key={item.id} className="flex gap-4 border-b border-stone-100 pb-4 mb-4">
+                            <button
+                              type="button"
+                              onClick={() => openWishlistItem(item)}
+                              disabled={!item.path}
+                              className="w-20 h-24 relative group cursor-pointer bg-white disabled:cursor-default"
+                            >
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className={`absolute inset-0 w-full h-full ${item.imageFit === 'contain' ? 'object-contain p-2' : 'object-cover'} transition-transform duration-700 group-hover:scale-105`}
+                                referrerPolicy="no-referrer"
+                              />
+                            </button>
+                            <div className="flex-1 flex flex-col">
+                              <div className="flex justify-between items-start mb-1 gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => openWishlistItem(item)}
+                                  disabled={!item.path}
+                                  className="text-left font-medium text-sm text-stone-900 leading-tight transition-colors hover:text-stone-600 disabled:cursor-default disabled:hover:text-stone-900"
+                                >
+                                  {item.title}
+                                </button>
+                                <button
+                                  onClick={() => handleRemoveFromPanel(item.id)}
+                                  className="shrink-0 text-red-600 transition-colors hover:text-red-800"
+                                  aria-label={`Remove ${item.title}`}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                              <p className="font-medium text-sm text-stone-900 mb-2 mt-auto">{item.priceLabel}</p>
                               <button
-                                onClick={() => handleRemoveFromPanel(item.id)}
-                                className="shrink-0 text-red-600 transition-colors hover:text-red-800"
-                                aria-label={`Remove ${item.title}`}
+                                onClick={() => handleMoveWishlistToCart(item)}
+                                className="btn-gold-textured w-full py-2 text-[10px] font-bold tracking-widest uppercase flex items-center justify-center gap-2"
                               >
-                                <Trash2 size={16} />
+                                <ShoppingCart className="w-3.5 h-3.5" />
+                                Add to Cart
                               </button>
                             </div>
-                            <p className="font-medium text-sm text-stone-900 mb-2 mt-auto">{item.priceLabel}</p>
-                            <button
-                              onClick={() => handleMoveWishlistToCart(item)}
-                              className="btn-gold-textured w-full py-2 text-[10px] font-bold tracking-widest uppercase flex items-center justify-center gap-2"
-                            >
-                              <ShoppingCart className="w-3.5 h-3.5" />
-                              Add to Cart
-                            </button>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <div className="border-t border-stone-100 bg-white px-5 py-4">
+                        <button
+                          type="button"
+                          onClick={() => navigateTo('/wishlist')}
+                          className="w-full border border-stone-900 py-3 text-center text-xs font-bold tracking-widest uppercase transition-colors hover:bg-stone-900 hover:text-white"
+                        >
+                          View Full Wishlist
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center text-center">
                       <Heart size={48} strokeWidth={1} className="text-stone-300 mb-4" />
                       <p className="text-stone-500 uppercase tracking-widest text-xs font-bold mb-6">No items in your wishlist</p>
-                      <a
-                        href="/wishlist"
-                        onClick={() => setActiveSidePanel(null)}
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/wishlist')}
                         className="block text-center btn-gold-textured w-full py-3.5 text-xs font-bold tracking-widest uppercase"
                       >
                         View Full Wishlist
-                      </a>
+                      </button>
                     </div>
                   )}
                 </motion.aside>
@@ -756,34 +836,69 @@ export default function App() {
                     <div>
                       <p className="text-[10px] uppercase font-bold tracking-[0.22em] text-stone-400 mb-5">Discovery</p>
                       <ul className="space-y-5">
-                        {navigation.map((item) => (
-                          <li key={item.title} className={item.highlight ? 'pt-2' : undefined}>
-                            <button
-                              type="button"
-                              onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
-                              className={`block py-1 font-bold text-lg transition-colors ${
-                                item.highlight ? 'text-red-600 hover:text-red-500' : 'text-stone-900 hover:text-stone-600'
-                              }`}
-                            >
-                              {item.title}
-                            </button>
-                            {item.subcategories.length > 0 && (
-                              <ul className="mt-2 ml-3 space-y-1 border-l border-stone-200 pl-4">
-                                {item.subcategories.map((sub) => (
-                                  <li key={sub.name}>
-                                    <button
-                                      type="button"
-                                      onClick={() => navigateTo(getCollectionPathByLabel(sub.name))}
-                                      className="block py-2 text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors uppercase tracking-wider"
-                                    >
-                                      {sub.name}
-                                    </button>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </li>
-                        ))}
+                        {navigation.map((item) => {
+                          const hasSubcategories = item.subcategories.length > 0;
+                          const isExpanded = expandedMobileCategories.includes(item.title);
+
+                          return (
+                            <li key={item.title} className={item.highlight ? 'pt-2' : undefined}>
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
+                                  className={`flex-1 py-1 text-left font-bold text-lg transition-colors ${
+                                    item.highlight ? 'text-red-600 hover:text-red-500' : 'text-stone-900 hover:text-stone-600'
+                                  }`}
+                                >
+                                  {item.title}
+                                </button>
+                                {hasSubcategories && (
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleMobileCategory(item.title)}
+                                    aria-expanded={isExpanded}
+                                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.title}`}
+                                    className="flex h-10 w-10 shrink-0 items-center justify-center text-stone-500 transition-colors hover:text-stone-900"
+                                  >
+                                    {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                  </button>
+                                )}
+                              </div>
+                              <AnimatePresence initial={false}>
+                                {hasSubcategories && isExpanded && (
+                                  <motion.ul
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.24, ease: 'easeInOut' }}
+                                    className="mt-2 ml-3 space-y-1 overflow-hidden border-l border-stone-200 pl-4"
+                                  >
+                                    {item.subcategories.map((sub) => (
+                                      <li key={sub.name}>
+                                        <button
+                                          type="button"
+                                          onClick={() => navigateTo(getCollectionPathByLabel(sub.name))}
+                                          className="block py-2 text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors uppercase tracking-wider"
+                                        >
+                                          {sub.name}
+                                        </button>
+                                      </li>
+                                    ))}
+                                    <li>
+                                      <button
+                                        type="button"
+                                        onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
+                                        className="block py-2.5 text-xs font-bold uppercase tracking-[0.18em] text-stone-400 underline underline-offset-4 transition-colors hover:text-stone-900"
+                                      >
+                                        {shopAllLabelByTitle[item.title] ?? `Shop All ${item.title}`}
+                                      </button>
+                                    </li>
+                                  </motion.ul>
+                                )}
+                              </AnimatePresence>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   </nav>
@@ -898,17 +1013,17 @@ export default function App() {
               <span className="text-[10px] uppercase font-medium mt-1">Account</span>
               
               {/* Account Dropdown */}
-              <div className="absolute top-full right-0 pt-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
-                <div className="bg-white min-w-[160px] border border-stone-100 shadow-xl py-3 backdrop-blur-sm">
-                  <div className="px-5 py-2 border-b border-stone-50 mb-2">
-                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Welcome</p>
+              <div className="absolute top-full right-0 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
+                <div className="max-w-[calc(100vw-2rem)] min-w-[220px] w-[min(30vw,320px)] border border-stone-100 bg-white py-4 shadow-xl backdrop-blur-sm">
+                  <div className="mb-2 border-b border-stone-50 px-6 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-stone-400">Welcome</p>
                   </div>
-                  <ul className="text-[11px] font-bold uppercase tracking-widest">
+                  <ul className="text-[13px] font-bold uppercase tracking-[0.14em] text-stone-700">
                     <li>
-                      <a href="#" className="block px-5 py-2.5 hover:bg-stone-50 hover:text-stone-900 transition-colors">Sign In</a>
+                      <a href="#" className="block px-6 py-3 hover:bg-stone-50 hover:text-stone-900 transition-colors">Sign In</a>
                     </li>
                     <li>
-                      <a href="#" className="block px-5 py-2.5 hover:bg-stone-50 hover:text-stone-900 transition-colors">Register</a>
+                      <a href="#" className="block px-6 py-3 hover:bg-stone-50 hover:text-stone-900 transition-colors">Register</a>
                     </li>
                   </ul>
                 </div>
@@ -952,9 +1067,9 @@ export default function App() {
           className="w-full flex justify-center"
           style={{ overflow: isScrollingDown ? 'hidden' : 'visible' }}
         >
-          <nav className={`hidden w-full max-w-[1240px] mx-auto lg:flex items-center justify-center gap-6 xl:gap-9 font-semibold text-xs xl:text-sm tracking-widest text-stone-800 uppercase transition-all duration-300 ${isScrolled ? 'py-1 opacity-90' : 'py-2 opacity-100'}`}>
+          <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-7 xl:gap-10 font-semibold text-[0.98rem] xl:text-[1.06rem] tracking-[0.16em] text-stone-800 uppercase transition-all duration-300 ${isScrolled ? 'py-1 opacity-90' : 'py-2 opacity-100'}`}>
             {navigation.map((item) => (
-              <div key={item.title} className="relative group py-1.5">
+              <div key={item.title} className="group py-1.5">
                 <button
                   type="button"
                   onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
@@ -966,32 +1081,32 @@ export default function App() {
                 </button>
                 
                 {item.subcategories.length > 0 && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
-                    <div className="bg-white min-w-[260px] border border-stone-100 shadow-2xl p-5 backdrop-blur-sm">
-                      <div className="text-[10px] text-stone-400 mb-4 border-b border-stone-50 pb-2 tracking-[0.2em] font-bold">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
+                    <div className="max-w-[calc(100vw-2rem)] w-[min(88vw,860px)] border border-stone-100 bg-white px-7 py-7 shadow-2xl backdrop-blur-sm lg:px-8 xl:px-10 xl:py-8">
+                      <div className="mb-6 border-b border-stone-50 pb-3 text-xs font-bold tracking-[0.24em] text-stone-400">
                         Explore {item.title}
                       </div>
-                      <ul className="space-y-4">
+                      <ul className="space-y-5">
                         {item.subcategories.map((sub) => (
                           <li key={sub.name}>
                             <button
                               type="button"
                               onClick={() => navigateTo(getCollectionPathByLabel(sub.name))}
-                              className="flex items-center justify-between group/sub text-stone-600 hover:text-stone-900 transition-colors"
+                              className="group/sub flex w-full items-center justify-between gap-8 text-left text-stone-600 transition-colors hover:text-stone-900"
                             >
-                              <span className="text-[11px] font-bold tracking-widest group-hover/sub:translate-x-1 transition-transform">{sub.name}</span>
+                              <span className="pr-6 text-[15px] font-bold tracking-[0.14em] group-hover/sub:translate-x-1 transition-transform">{sub.name}</span>
                               {'units' in sub && (
-                                <span className="text-[10px] text-stone-300 font-mono tracking-tighter">({sub.units})</span>
+                                <span className="ml-auto min-w-[3rem] text-right text-[13px] font-mono tracking-[0.08em] text-stone-300">({sub.units})</span>
                               )}
                             </button>
                           </li>
                         ))}
                       </ul>
-                      <div className="mt-6 pt-4 border-t border-stone-100">
+                      <div className="mt-8 border-t border-stone-100 pt-5">
                         <button
                           type="button"
                           onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
-                          className="text-[9px] font-bold text-stone-400 hover:text-stone-900 transition-colors tracking-[0.1em] underline underline-offset-4"
+                          className="text-xs font-bold text-stone-400 transition-colors tracking-[0.14em] underline underline-offset-4 hover:text-stone-900"
                         >
                           {shopAllLabelByTitle[item.title] ?? `Shop All ${item.title}`}
                         </button>
@@ -1019,6 +1134,233 @@ export default function App() {
             navigateTo={navigateTo}
             onAddToWishlist={handleAddProductToWishlist}
           />
+        ) : isWishlistPage ? (
+          <>
+            <section className="relative overflow-hidden border-b border-stone-200 bg-[#f4ecdf]">
+              <div className="absolute inset-0 opacity-80" style={{ background: 'radial-gradient(circle at top right, rgba(194, 164, 83, 0.18), transparent 38%), linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(244, 236, 223, 0.9))' }} />
+              <div className="relative max-w-[1200px] mx-auto px-4 sm:px-8 py-14 md:py-18">
+                <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+                  <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                    <div className="max-w-3xl">
+                      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.32em] text-[#8b765e]">Wishlist</p>
+                      <h1 className="font-serif text-3xl text-stone-900 md:text-5xl">Your saved favourites.</h1>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-stone-500">
+                      <button type="button" onClick={() => navigateTo('/')} className="transition-colors hover:text-stone-900">
+                        Home
+                      </button>
+                      <ArrowRight size={14} strokeWidth={1.5} />
+                      <span className="text-stone-900">Wishlist</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </section>
+
+            <section className="max-w-[1200px] mx-auto px-4 py-12 sm:px-8 md:py-16">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                {wishlistItems.length > 0 ? (
+                  <div className="flex flex-col lg:flex-row gap-12">
+                    <div className="flex-1">
+                      <div className="hidden md:grid grid-cols-12 gap-4 border-b border-stone-200 pb-4 mb-6 text-xs font-bold tracking-widest uppercase text-stone-400">
+                        <div className="col-span-7">Product</div>
+                        <div className="col-span-2 text-center">Price</div>
+                        <div className="col-span-3 text-right">Actions</div>
+                      </div>
+
+                      {wishlistItems.map((item) => (
+                        <div key={item.id} className="group relative flex flex-col md:grid md:grid-cols-12 gap-4 items-start md:items-center py-6 border-b border-stone-200 mb-4 md:mb-0">
+                          <div className="col-span-7 flex gap-6 w-full">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFromPanel(item.id)}
+                              className="absolute top-0 right-0 p-2 text-red-600 transition-colors hover:text-red-800 md:relative md:top-auto md:right-auto md:p-0"
+                              aria-label={`Remove ${item.title}`}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => openWishlistItem(item)}
+                              disabled={!item.path}
+                              className="w-24 h-32 md:w-32 md:h-40 relative shrink-0 disabled:cursor-default"
+                            >
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className={`absolute inset-0 w-full h-full ${item.imageFit === 'contain' ? 'object-contain p-3' : 'object-cover'}`}
+                                referrerPolicy="no-referrer"
+                              />
+                            </button>
+                            <div className="flex flex-col justify-center">
+                              <button
+                                type="button"
+                                onClick={() => openWishlistItem(item)}
+                                disabled={!item.path}
+                                className="text-left font-medium text-sm md:text-base text-stone-900 mb-1 transition-colors hover:text-stone-600 disabled:cursor-default disabled:hover:text-stone-900"
+                              >
+                                {item.title}
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="col-span-2 text-sm text-stone-900 text-left md:text-center font-medium w-full md:w-auto mt-4 md:mt-0 flex justify-between md:block">
+                            <span className="md:hidden text-stone-400 text-xs">Price:</span>
+                            {item.priceLabel}
+                          </div>
+
+                          <div className="col-span-3 w-full md:w-auto mt-2 md:mt-0 flex flex-col gap-2 md:justify-end">
+                            {item.path ? (
+                              <button
+                                type="button"
+                                onClick={() => openWishlistItem(item)}
+                                className="border border-stone-300 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-900"
+                              >
+                                View Product
+                              </button>
+                            ) : null}
+                            <button
+                              type="button"
+                              onClick={() => handleMoveWishlistToCart(item)}
+                              className="btn-gold-textured px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest"
+                            >
+                              Add to Cart
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="mt-8">
+                        <button
+                          type="button"
+                          onClick={() => navigateTo('/')}
+                          className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-stone-500 hover:text-stone-900 transition-colors"
+                        >
+                          <ArrowRight size={16} strokeWidth={1.6} className="rotate-180" />
+                          Continue Shopping
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="w-full lg:w-[380px] shrink-0">
+                      <div className="bg-stone-100 p-6 md:p-8 border border-stone-200">
+                        <h2 className="font-serif text-2xl text-stone-900 mb-6 border-b border-stone-200 pb-4">Wishlist Summary</h2>
+
+                        <div className="space-y-4 mb-4">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-stone-500">Saved items</span>
+                            <span className="font-medium">{wishlistItems.length}</span>
+                          </div>
+                          <div className="flex justify-between text-sm border-b border-stone-200 pb-4">
+                            <span className="text-stone-500">Estimated value</span>
+                            <span className="font-medium">{formatRand(wishlistEstimatedValue)}</span>
+                          </div>
+
+                          <div className="flex justify-between items-end pt-2">
+                            <span className="text-base font-bold">Total value</span>
+                            <span className="font-serif text-2xl">{formatRand(wishlistEstimatedValue)}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleAddAllWishlistToCart();
+                            navigateTo('/cart');
+                          }}
+                          className="btn-gold-textured w-full py-4 text-xs font-bold tracking-widest uppercase shadow-md hover:shadow-lg transition-all mb-4"
+                        >
+                          Add All to Cart & Review
+                        </button>
+
+                        <div className="border-t border-stone-200 pt-5 space-y-4">
+                          <button
+                            type="button"
+                            onClick={() => navigateTo('/collections')}
+                            className="flex w-full items-center justify-between gap-3 text-[11px] uppercase tracking-[0.24em] text-stone-500 transition-colors hover:text-stone-900"
+                          >
+                            <span>Continue Shopping</span>
+                            <ArrowRight size={14} strokeWidth={1.6} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => navigateTo('/cart')}
+                            className="flex w-full items-center justify-between gap-3 text-[11px] uppercase tracking-[0.24em] text-stone-500 transition-colors hover:text-stone-900"
+                          >
+                            <span>View Cart</span>
+                            <ArrowRight size={14} strokeWidth={1.6} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center py-12 md:py-14 bg-stone-50 border border-stone-100 rounded-sm">
+                    <Heart size={64} strokeWidth={1} className="text-stone-300 mb-6" />
+                    <h2 className="font-serif text-2xl text-stone-900 mb-2">Your wishlist is empty</h2>
+                    <p className="text-stone-500 mb-8 max-w-md">
+                      Looks like you have not saved any items yet. Discover our exclusive collections.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('/collections')}
+                      className="btn-gold-textured px-8 py-3.5 text-xs font-bold tracking-widest uppercase"
+                    >
+                      Browse Collections
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            </section>
+
+            <section className="border-t border-stone-200 bg-[#fcfaf5] py-14 md:py-16">
+              <div className="max-w-[1200px] mx-auto px-4 sm:px-8">
+                <div className="mb-8 md:mb-10 text-center">
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-[#8b765e]">Discover More</p>
+                  <h2 className="font-serif text-3xl md:text-4xl text-stone-900">
+                    {wishlistItems.length > 0 ? 'You May Also Like' : 'New Arrivals'}
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4">
+                  {newArrivalProducts.slice(0, 4).map((product) => {
+                    const internalPath = getProductCardPath(product.title);
+
+                    return (
+                      <a
+                        key={product.title}
+                        href={internalPath ?? product.link}
+                        target={internalPath ? undefined : '_blank'}
+                        rel={internalPath ? undefined : 'noopener noreferrer'}
+                        onClick={internalPath ? (event) => {
+                          event.preventDefault();
+                          navigateTo(internalPath);
+                        } : undefined}
+                        className="luxury-product-card group flex h-full flex-col"
+                      >
+                        <div className="luxury-image-frame relative mb-4 aspect-[3/4] overflow-hidden bg-stone-100 md:mb-5">
+                          <img
+                            src={product.img}
+                            alt={product.title}
+                            className={`absolute inset-0 h-full w-full ${product.imageFit === 'contain' ? 'object-contain p-4' : 'object-cover'} transition-transform duration-700 group-hover:scale-105`}
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                        <h3 className="mb-1 line-clamp-2 min-h-[2.5rem] text-sm font-medium text-stone-800">
+                          {product.title}
+                        </h3>
+                        <p className="mb-3 text-sm font-semibold text-stone-500">{product.price}</p>
+                        <span className="btn-gold-textured premium-select-button mt-auto flex w-full items-center justify-center gap-2 py-3 text-[10px] font-bold uppercase tracking-widest">
+                          <ShoppingCart className="h-3.5 w-3.5" />
+                          <span>Select Options</span>
+                        </span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          </>
         ) : isCartPage ? (
           <>
             <section className="relative overflow-hidden border-b border-stone-200 bg-[#f4ecdf]">
@@ -1028,10 +1370,7 @@ export default function App() {
                   <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                     <div className="max-w-3xl">
                       <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.32em] text-[#8b765e]">Shopping Cart</p>
-                      <h1 className="font-serif text-3xl md:text-5xl text-stone-900 mb-2">Review your cart.</h1>
-                      <p className="text-stone-600 max-w-2xl text-sm md:text-base leading-relaxed">
-                        Update your items and continue to checkout.
-                      </p>
+                      <h1 className="font-serif text-3xl md:text-5xl text-stone-900">Review your cart.</h1>
                     </div>
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-stone-500">
                       <button type="button" onClick={() => navigateTo('/')} className="transition-colors hover:text-stone-900">
@@ -1058,7 +1397,7 @@ export default function App() {
                       </div>
 
                       {cartItems.map((item) => (
-                        <div key={item.id} className="group relative flex flex-col md:grid md:grid-cols-12 gap-4 items-start md:items-center py-6 border-b border-stone-100 mb-4 md:mb-0">
+                        <div key={item.id} className="group relative flex flex-col md:grid md:grid-cols-12 gap-4 items-start md:items-center py-6 border-b border-stone-200 mb-4 md:mb-0">
                           <div className="col-span-6 flex gap-6 w-full">
                             <button
                               type="button"
@@ -1128,7 +1467,7 @@ export default function App() {
                     </div>
 
                     <div className="w-full lg:w-[380px] shrink-0">
-                      <div className="bg-stone-50 p-6 md:p-8 border border-stone-100">
+                      <div className="bg-stone-100 p-6 md:p-8 border border-stone-200">
                         <h2 className="font-serif text-2xl text-stone-900 mb-6 border-b border-stone-200 pb-4">Order Summary</h2>
 
                         <div className="space-y-4 mb-4">
@@ -1634,21 +1973,40 @@ export default function App() {
                 const internalPath = getProductCardPath(product.title);
 
                 return (
-                <a
-                  key={idx}
-                  href={internalPath ?? product.link}
+	                <a
+	                  key={idx}
+	                  href={internalPath ?? product.link}
                   target={internalPath ? undefined : '_blank'}
                   rel={internalPath ? undefined : 'noopener noreferrer'}
                   onClick={internalPath ? (event) => {
                     event.preventDefault();
                     navigateTo(internalPath);
                   } : undefined}
-                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
-                >
-                  <div className="luxury-image-frame relative w-full aspect-[3/4] bg-stone-100 overflow-hidden mb-4 md:mb-5">
-                    <img
-                      src={product.img}
-                      alt={product.title}
+	                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
+	                >
+	                  <div className="luxury-image-frame relative w-full aspect-[3/4] bg-stone-100 overflow-hidden mb-4 md:mb-5">
+	                    <button
+	                      type="button"
+	                      onClick={(event) => {
+	                        event.preventDefault();
+	                        event.stopPropagation();
+	                        handleAddProductToWishlist({
+	                          id: internalPath ?? product.link,
+	                          title: product.title,
+	                          priceLabel: product.price,
+	                          numericPrice: parseProductCardPrice(product.price),
+	                          image: product.img,
+	                          path: internalPath,
+	                        });
+	                      }}
+	                      className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-stone-400 opacity-0 shadow-sm ring-1 ring-stone-200/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:text-red-500 group-hover:opacity-100"
+	                      aria-label={`Add ${product.title} to wishlist`}
+	                    >
+	                      <Heart className="h-4 w-4" strokeWidth={1.5} />
+	                    </button>
+	                    <img
+	                      src={product.img}
+	                      alt={product.title}
                       className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                       referrerPolicy="no-referrer"
                     />
@@ -1703,21 +2061,40 @@ export default function App() {
                 const internalPath = getProductCardPath(product.title);
 
                 return (
-                <a
-                  key={idx}
-                  href={internalPath ?? product.link}
+	                <a
+	                  key={idx}
+	                  href={internalPath ?? product.link}
                   target={internalPath ? undefined : '_blank'}
                   rel={internalPath ? undefined : 'noopener noreferrer'}
                   onClick={internalPath ? (event) => {
                     event.preventDefault();
                     navigateTo(internalPath);
                   } : undefined}
-                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
-                >
-                  <div className="luxury-image-frame relative w-full aspect-[3/4] bg-stone-100 overflow-hidden mb-4 md:mb-5">
-                    <img
-                      src={product.img}
-                      alt={product.title}
+	                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
+	                >
+	                  <div className="luxury-image-frame relative w-full aspect-[3/4] bg-stone-100 overflow-hidden mb-4 md:mb-5">
+	                    <button
+	                      type="button"
+	                      onClick={(event) => {
+	                        event.preventDefault();
+	                        event.stopPropagation();
+	                        handleAddProductToWishlist({
+	                          id: internalPath ?? product.link,
+	                          title: product.title,
+	                          priceLabel: product.price,
+	                          numericPrice: parseProductCardPrice(product.price),
+	                          image: product.img,
+	                          path: internalPath,
+	                        });
+	                      }}
+	                      className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-stone-400 opacity-0 shadow-sm ring-1 ring-stone-200/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:text-red-500 group-hover:opacity-100"
+	                      aria-label={`Add ${product.title} to wishlist`}
+	                    >
+	                      <Heart className="h-4 w-4" strokeWidth={1.5} />
+	                    </button>
+	                    <img
+	                      src={product.img}
+	                      alt={product.title}
                       className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                       referrerPolicy="no-referrer"
                     />
@@ -1780,28 +2157,48 @@ export default function App() {
                 const internalPath = getProductCardPath(product.title);
 
                 return (
-                <a
-                  key={idx}
-                  href={internalPath ?? product.link}
+	                <a
+	                  key={idx}
+	                  href={internalPath ?? product.link}
                   target={internalPath ? undefined : '_blank'}
                   rel={internalPath ? undefined : 'noopener noreferrer'}
                   onClick={internalPath ? (event) => {
                     event.preventDefault();
                     navigateTo(internalPath);
                   } : undefined}
-                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
-                >
-                  <div className="luxury-image-frame relative w-full aspect-square bg-stone-100 overflow-hidden mb-4 md:mb-5">
-                    {product.onSale && (
-                      <div className="absolute top-3 left-3 z-10">
+	                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
+	                >
+	                  <div className="luxury-image-frame relative w-full aspect-square bg-stone-100 overflow-hidden mb-4 md:mb-5">
+	                    {product.onSale && (
+	                      <div className="absolute top-3 left-3 z-10">
                         <span className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold tracking-widest uppercase shadow-sm">
                           Sale
-                        </span>
-                      </div>
-                    )}
-                    <img
-                      src={product.img}
-                      alt={product.title}
+	                        </span>
+	                      </div>
+	                    )}
+	                    <button
+	                      type="button"
+	                      onClick={(event) => {
+	                        event.preventDefault();
+	                        event.stopPropagation();
+	                        handleAddProductToWishlist({
+	                          id: internalPath ?? product.link,
+	                          title: product.title,
+	                          priceLabel: product.price,
+	                          numericPrice: parseProductCardPrice(product.price),
+	                          image: product.img,
+	                          imageFit: 'contain',
+	                          path: internalPath,
+	                        });
+	                      }}
+	                      className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-stone-400 opacity-0 shadow-sm ring-1 ring-stone-200/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:text-red-500 group-hover:opacity-100"
+	                      aria-label={`Add ${product.title} to wishlist`}
+	                    >
+	                      <Heart className="h-4 w-4" strokeWidth={1.5} />
+	                    </button>
+	                    <img
+	                      src={product.img}
+	                      alt={product.title}
                       className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
                       referrerPolicy="no-referrer"
                     />

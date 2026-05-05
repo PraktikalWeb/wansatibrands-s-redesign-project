@@ -10,8 +10,21 @@ html {
   font-size: 110%; /* Slightly larger base to increase all text globally */
 }
 
+@media (min-width: 1024px) {
+  html {
+    font-size: 114%;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 116%;
+  }
+}
+
 body {
   background-color: #fcfcf9; /* Subtle off-white to match the design */
+  line-height: 1.5;
 }
 
 button {

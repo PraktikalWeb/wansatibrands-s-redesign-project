@@ -31,6 +31,7 @@ type CollectionPageProps = {
     numericPrice: number;
     image: string;
     imageFit?: CollectionImageFit;
+    path?: string;
   }) => void;
 };
 
@@ -114,9 +115,10 @@ function CollectionProductCard({
               numericPrice: product.numericPrice,
               image: product.image,
               imageFit: product.imageFit,
+              path: product.path,
             });
           }}
-          className="absolute right-3 top-3 z-10 bg-white/95 p-1.5 text-stone-400 opacity-0 shadow-sm transition-all duration-300 hover:text-red-500 group-hover:opacity-100"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-stone-400 opacity-0 shadow-sm ring-1 ring-stone-200/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:text-red-500 group-hover:opacity-100"
           aria-label={`Add ${product.title} to wishlist`}
         >
           <Heart className="h-4 w-4" strokeWidth={1.5} />
@@ -334,10 +336,7 @@ export default function CollectionPage({
               <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div className="max-w-3xl">
                   <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.32em] text-[#8b765e]">Shop Wansati</p>
-                  <h1 className="mb-3 font-serif text-3xl text-stone-900 md:text-5xl">Wansati Collections</h1>
-                  <p className="max-w-2xl text-sm leading-relaxed text-stone-600 md:text-base">
-                    Explore fashion, fragrances, body care, kidswear, and home scent through collection pages built to help customers move from category discovery into product browsing quickly.
-                  </p>
+                  <h1 className="font-serif text-3xl text-stone-900 md:text-5xl">Wansati Collections</h1>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-stone-500">
                   <button type="button" onClick={() => navigateTo('/')} className="transition-colors hover:text-stone-900">
@@ -379,26 +378,34 @@ export default function CollectionPage({
             </div>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
               {collectionDirectoryGroups.map((group) => (
-                <div key={group.title} className="border border-stone-200 bg-white px-5 py-5">
+                <motion.div
+                  key={group.title}
+                  whileHover={{ y: -4, scale: 1.01 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="group relative overflow-hidden border border-stone-200 bg-white px-5 py-5 transition-[border-color,box-shadow] duration-300 hover:border-stone-300 hover:shadow-[0_14px_35px_rgba(28,26,23,0.08)]"
+                >
                   <h3 className="mb-4 border-b border-stone-100 pb-3 text-xs font-bold uppercase tracking-[0.2em] text-stone-900">
                     {group.title}
                   </h3>
-                  <div className="space-y-3">
+                  <div className="relative space-y-2.5">
                     {group.collections.map((collection) => (
                       <button
                         type="button"
                         key={collection.slug}
                         onClick={() => navigateTo(collectionPath(collection.slug))}
-                        className="flex w-full items-center justify-between gap-4 text-left text-sm text-stone-600 transition-colors hover:text-stone-900"
+                        className="group/category flex w-full items-center justify-between gap-4 border border-transparent px-2 py-2 text-left text-sm text-stone-600 transition-all duration-200 hover:translate-x-1 hover:border-stone-100 hover:bg-[#fcfaf5] hover:text-stone-900"
                       >
-                        <span>{collection.title}</span>
-                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-400">
+                        <span className="flex items-center gap-2">
+                          <span>{collection.title}</span>
+                          <ChevronRight className="h-3.5 w-3.5 -translate-x-1 text-stone-400 opacity-0 transition-all duration-200 group-hover/category:translate-x-0 group-hover/category:opacity-100" />
+                        </span>
+                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-400 transition-colors duration-200 group-hover/category:text-stone-500">
                           {typeof collection.count === 'number' ? collection.count : ''}
                         </span>
                       </button>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
