@@ -22,9 +22,30 @@ button {
   background-color: #c2a453 !important;
   color: #fff !important;
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   border: none;
-  transition: all 0.3s ease;
+  box-shadow: 0 10px 24px rgba(98, 76, 25, 0.18);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.45s ease;
+}
+
+.btn-gold-textured::before {
+  content: "";
+  position: absolute;
+  inset: -40% -70%;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.44) 48%,
+    rgba(255, 246, 207, 0.42) 52%,
+    transparent 66%
+  );
+  transform: translateX(-55%) rotate(8deg);
+  transition: opacity 0.35s ease, transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn-gold-textured::after {
@@ -40,4 +61,123 @@ button {
 
 .btn-gold-textured:hover {
   background-color: #a88a3e !important;
+  box-shadow: 0 16px 34px rgba(98, 76, 25, 0.28), 0 0 0 1px rgba(255, 239, 176, 0.24) inset;
+  transform: translateY(-1px);
+}
+
+.btn-gold-textured:hover::before {
+  opacity: 1;
+  transform: translateX(55%) rotate(8deg);
+}
+
+.btn-gold-textured:active {
+  transform: translateY(0);
+}
+
+.premium-title {
+  text-shadow: 0 12px 38px rgba(0, 0, 0, 0.32), 0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+.premium-nav-link {
+  position: relative;
+}
+
+.premium-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.55rem;
+  width: 1.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c2a453, transparent);
+  opacity: 0;
+  transform: translateX(-50%) scaleX(0.3);
+  transform-origin: center;
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.premium-nav-link:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scaleX(1);
+}
+
+.premium-input {
+  transition: border-color 0.3s ease, box-shadow 0.35s ease, background-color 0.35s ease;
+}
+
+.premium-input:focus {
+  box-shadow: 0 0 0 3px rgba(194, 164, 83, 0.12), 0 10px 30px rgba(41, 37, 36, 0.06);
+}
+
+.luxury-icon-control {
+  transition: color 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.luxury-icon-control:hover {
+  transform: translateY(-2px);
+}
+
+.luxury-card,
+.luxury-feature-card {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s ease;
+}
+
+.luxury-product-card {
+  transition: none;
+}
+
+.luxury-card:hover {
+  transform: translateY(-4px);
+}
+
+.luxury-card:hover {
+  border-color: rgba(194, 164, 83, 0.24);
+  box-shadow: 0 18px 40px rgba(41, 37, 36, 0.08);
+}
+
+.luxury-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 26px 58px rgba(41, 37, 36, 0.18);
+}
+
+.luxury-floating-cart {
+  box-shadow: 0 8px 22px rgba(41, 37, 36, 0.14);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+}
+
+.luxury-floating-cart:hover {
+  box-shadow: 0 12px 26px rgba(41, 37, 36, 0.18);
+  transform: translateY(-1px) scale(1.03);
+}
+
+.premium-select-button {
+  min-height: 2.75rem;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-gold-textured,
+  .btn-gold-textured::before,
+  .premium-nav-link::after,
+  .premium-input,
+  .luxury-icon-control,
+  .luxury-card,
+  .luxury-feature-card,
+  .luxury-product-card,
+  .luxury-floating-cart {
+    transition: none !important;
+  }
+
+  .btn-gold-textured:hover,
+  .luxury-icon-control:hover,
+  .luxury-card:hover,
+  .luxury-feature-card:hover,
+  .luxury-product-card:hover,
+  .luxury-floating-cart:hover {
+    transform: none !important;
+  }
 }
