@@ -10,139 +10,34 @@ import {
   User2,
 } from 'lucide-react';
 import { productListingPath } from './collectionData';
+import { BLOG_CATEGORIES, BLOG_POSTS, type BlogPost } from './blogData';
 
 type BlogPageProps = {
   navigateTo: (path: string) => void;
 };
 
-type BlogPost = {
-  title: string;
-  href: string;
-  image: string;
-  dateLabel: string;
-  author: string;
-  categories: string[];
-  excerpt: string;
-  featured?: boolean;
+type ArticleLinkProps = {
+  post: BlogPost;
+  navigateTo: (path: string) => void;
+  className: string;
+  children: React.ReactNode;
 };
 
-const BLOG_POSTS: BlogPost[] = [
-  {
-    title: 'The Freshness of the Spring Season is Here, Find Your Perfect Fragrance',
-    href: 'https://www.wansatibrands.co.za/embrace-the-freshness-of-the-spring-season-find-your-perfect-spring-fragrance/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2024/09/Blue-white-minimal-linkedin-profile-cover-image-2500-x-1300-px.png?fit=1920%2C998&ssl=1',
-    dateLabel: 'September 11, 2024',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Fragrances', 'Self Care'],
-    excerpt:
-      'Spring brings renewal, lighter moods, and a chance to refresh your scent wardrobe. This feature helps readers find a fragrance that fits the season.',
-    featured: true,
-  },
-  {
-    title: 'The Perfume Note: Why Are Perfume Notes So Important?',
-    href: 'https://www.wansatibrands.co.za/the-perfume-note-why-are-perfume-notes-so-important/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2024/04/Untitled-design-scaled.jpg?fit=2560%2C1313&ssl=1',
-    dateLabel: 'April 9, 2024',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Fragrances'],
-    excerpt:
-      'Top, heart, and base notes shape how a perfume opens, evolves, and lasts. This article explains why understanding notes changes how you choose scent.',
-    featured: true,
-  },
-  {
-    title: 'A Journey Through Olfactory Groups: A Guideline to Choosing a Fragrance',
-    href: 'https://www.wansatibrands.co.za/a-journey-through-olfactory-groups-a-guideline-to-choosing-a-fragrance/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2024/01/fragrance-wheel_1024x1024.webp?fit=600%2C600&ssl=1',
-    dateLabel: 'January 7, 2024',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Fragrances'],
-    excerpt:
-      'An introduction to fragrance families and olfactory groups, designed to help readers navigate perfume with more clarity and confidence.',
-    featured: true,
-  },
-  {
-    title: 'Discovering Your Signature Scent: A Guide to Finding Your Perfect Perfume',
-    href: 'https://www.wansatibrands.co.za/discovering-your-signature-scent-a-guide-to-finding-your-perfect-perfume/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Kit.png?fit=1080%2C1080&ssl=1',
-    dateLabel: 'September 15, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Fragrances'],
-    excerpt:
-      'A signature scent is a personal statement. This guide explores how to choose a perfume that feels memorable, expressive, and uniquely yours.',
-  },
-  {
-    title: 'Transform Your Space with Aromatherapy: The Art of Using Diffusers',
-    href: 'https://www.wansatibrands.co.za/transform-your-space-with-aromatherapy-the-art-of-using-diffusers/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Diffuser.jpg?fit=1181%2C1181&ssl=1',
-    dateLabel: 'September 14, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Self Care'],
-    excerpt:
-      'Diffusers can turn ordinary rooms into restorative spaces. The article looks at scent, atmosphere, and the quiet impact of aromatherapy at home.',
-  },
-  {
-    title: 'Unlocking the Beauty Secrets: The Advantages of Tissue Oil',
-    href: 'https://www.wansatibrands.co.za/unlocking-the-beauty-secrets-the-advantages-of-tissue-oil/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Oil.jpg?fit=1181%2C1181&ssl=1',
-    dateLabel: 'September 14, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Uncategorized'],
-    excerpt:
-      'A closer look at why tissue oil remains a staple in beauty routines, from nourishment and softness to everyday skincare confidence.',
-  },
-  {
-    title: 'Exploring the Enchanting World of Perfumes: A Guide to Different Types of Fragrances',
-    href: 'https://www.wansatibrands.co.za/new-home-decor-from-john-doerson/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2017/06/pexels-rfstudio-3059609-scaled.jpg?fit=1708%2C2560&ssl=1',
-    dateLabel: 'September 5, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Fragrances'],
-    excerpt:
-      'A broad introduction to fragrance types and scent families, showing how perfume can express mood, memory, and personality.',
-  },
-  {
-    title: 'Radiant Skin: Your Ultimate Guide to Face Care',
-    href: 'https://www.wansatibrands.co.za/the-big-design-wall-likes-pictures/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/pexels-ron-lach-8142196-scaled.jpg?fit=1707%2C2560&ssl=1',
-    dateLabel: 'September 2, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Self Care'],
-    excerpt:
-      'A face-care guide centered on consistent routines, healthy skin habits, and treating skincare as part of overall wellbeing.',
-  },
-  {
-    title: 'Finding Yourself After Kids: A Journey of Self-Rediscovery for Women',
-    href: 'https://www.wansatibrands.co.za/minimalist-japanese-inspired-furniture/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2017/06/pexels-photo-2661255.jpeg?fit=600%2C791&ssl=1',
-    dateLabel: 'August 22, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Self Care'],
-    excerpt:
-      'A reflective piece on reconnecting with identity, confidence, and personal wellbeing after motherhood reshapes daily life.',
-  },
-  {
-    title: 'Creative Ways to Boost Your Income: Ideas for Extra Earnings',
-    href: 'https://www.wansatibrands.co.za/sweet-seat-functional-seat-for-it-folks/?v=eacb463a8002',
-    image:
-      'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2017/06/dark-skinned-pretty-woman-hodlng-bottle-body-lotion-hands_259150-57478.png?fit=726%2C471&ssl=1',
-    dateLabel: 'June 14, 2023',
-    author: 'WansatiBeautyAdmin',
-    categories: ['Self Care', 'Wansati Distributor'],
-    excerpt:
-      'A practical article on creating extra income opportunities and approaching entrepreneurship with more intention and momentum.',
-  },
-];
+function ArticleLink({ post, navigateTo, className, children }: ArticleLinkProps) {
+  if (post.isExternal) {
+    return (
+      <a href={post.href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
 
-const BLOG_CATEGORIES = ['All', 'Fragrances', 'Self Care', 'Uncategorized', 'Wansati Distributor'] as const;
+  return (
+    <button type="button" onClick={() => navigateTo(post.href)} className={`${className} text-left`}>
+      {children}
+    </button>
+  );
+}
 
 export default function BlogPage({ navigateTo }: BlogPageProps) {
   const [activeCategory, setActiveCategory] = useState<(typeof BLOG_CATEGORIES)[number]>('All');
@@ -206,20 +101,14 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
                 </div>
               </div>
 
-              <div className="border border-stone-200 bg-white/85 p-6 shadow-[0_24px_60px_rgba(42,38,32,0.08)] backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#8b765e]">At A Glance</p>
-                <div className="mt-5 grid grid-cols-2 gap-4">
-                  <div className="border border-stone-200 bg-[#fcfaf5] p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">Articles</p>
-                    <p className="mt-2 font-serif text-3xl text-stone-900">{BLOG_POSTS.length}</p>
-                  </div>
-                  <div className="border border-stone-200 bg-[#fcfaf5] p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">Topics</p>
-                    <p className="mt-2 font-serif text-3xl text-stone-900">{BLOG_CATEGORIES.length - 1}</p>
-                  </div>
+              <div className="flex flex-col items-start gap-4 lg:justify-self-end">
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-stone-500">
+                  <span className="h-px w-8 bg-[#c2a453]" />
+                  <span>{BLOG_POSTS.length} Articles</span>
                 </div>
-                <div className="mt-5 border-t border-stone-200 pt-5 text-sm leading-relaxed text-stone-600">
-                  <p>Focus areas include fragrance education, self-care, and distributor-minded entrepreneurship.</p>
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-stone-500">
+                  <span className="h-px w-8 bg-[#c2a453]" />
+                  <span>{BLOG_CATEGORIES.length - 1} Topics</span>
                 </div>
               </div>
             </div>
@@ -235,10 +124,9 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_360px]">
-            <a
-              href={leadFeaturedPost.href}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ArticleLink
+              post={leadFeaturedPost}
+              navigateTo={navigateTo}
               className="group block overflow-hidden border border-stone-200 bg-[#fcfaf5] shadow-sm"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
@@ -279,18 +167,21 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
                 </div>
                 <span className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-900">
                   Read Article
-                  <ExternalLink className="h-4 w-4" strokeWidth={1.7} />
+                  {leadFeaturedPost.isExternal ? (
+                    <ExternalLink className="h-4 w-4" strokeWidth={1.7} />
+                  ) : (
+                    <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                  )}
                 </span>
               </div>
-            </a>
+            </ArticleLink>
 
             <div className="space-y-6">
               {supportingFeaturedPosts.map((post) => (
-                <a
+                <ArticleLink
                   key={post.title}
-                  href={post.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  post={post}
+                  navigateTo={navigateTo}
                   className="group block border border-stone-200 bg-white p-5 shadow-sm"
                 >
                   <div className="mb-4 flex items-center justify-between gap-3">
@@ -309,9 +200,13 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
                   <p className="mt-3 text-sm leading-relaxed text-stone-600">{post.excerpt}</p>
                   <span className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-900">
                     Read More
-                    <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                    {post.isExternal ? (
+                      <ExternalLink className="h-4 w-4" strokeWidth={1.7} />
+                    ) : (
+                      <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                    )}
                   </span>
-                </a>
+                </ArticleLink>
               ))}
             </div>
           </div>
@@ -350,11 +245,10 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
 
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {visiblePosts.map((post) => (
-                <a
+                <ArticleLink
                   key={post.title}
-                  href={post.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  post={post}
+                  navigateTo={navigateTo}
                   className="luxury-card group flex h-full flex-col overflow-hidden border border-stone-200 bg-white shadow-sm"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
@@ -402,10 +296,14 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
 
                     <span className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-900">
                       Read Article
-                      <ExternalLink className="h-4 w-4" strokeWidth={1.7} />
+                      {post.isExternal ? (
+                        <ExternalLink className="h-4 w-4" strokeWidth={1.7} />
+                      ) : (
+                        <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                      )}
                     </span>
                   </div>
-                </a>
+                </ArticleLink>
               ))}
             </div>
           </motion.div>
