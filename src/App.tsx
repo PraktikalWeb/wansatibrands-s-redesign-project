@@ -1552,9 +1552,10 @@ export default function App() {
                             </div>
                           </div>
 
-                          <div className="col-span-2 text-sm text-stone-900 font-bold text-left md:text-right w-full md:w-auto mt-2 md:mt-0 flex justify-between md:block">
-                            <span className="md:hidden text-stone-400 text-xs">Total:</span>
-                            {formatRand(item.unitPrice * item.quantity)}
+                          <div className="col-span-2 mt-2 flex w-full items-center gap-3 text-left text-sm font-bold text-stone-900 md:mt-0 md:w-auto lg:block lg:text-right">
+                            <span className="shrink-0 text-xs text-stone-400 lg:hidden">Total:</span>
+                            <span className="h-px flex-1 bg-stone-100 lg:hidden" aria-hidden="true" />
+                            <span className="shrink-0">{formatRand(item.unitPrice * item.quantity)}</span>
                           </div>
                         </div>
                       ))}

@@ -570,7 +570,7 @@ export default function ProductListingPage({
 
         <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
           <aside className="hidden lg:block">
-            <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto border border-stone-300 bg-[#fcfaf5] px-5 py-6">
+            <div className="plp-filter-sidebar sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto border-r border-stone-300 bg-[#fcfaf5] px-5 py-6">
               <FilterPanel
                 showSearch={false}
                 searchQuery={searchQuery}

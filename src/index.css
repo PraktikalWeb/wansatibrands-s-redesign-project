@@ -172,6 +172,37 @@ button {
     box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.plp-filter-sidebar {
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+
+.plp-filter-sidebar::-webkit-scrollbar {
+  width: 0;
+}
+
+.plp-filter-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.plp-filter-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(121, 113, 101, 0.35);
+  border-radius: 999px;
+}
+
+.plp-filter-sidebar:hover {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(121, 113, 101, 0.4) transparent;
+}
+
+.plp-filter-sidebar:hover::-webkit-scrollbar {
+  width: 5px;
+}
+
+.plp-filter-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(121, 113, 101, 0.5);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-gold-textured,
   .btn-gold-textured::before,
