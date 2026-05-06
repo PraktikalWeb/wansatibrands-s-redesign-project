@@ -212,11 +212,6 @@ export default function App() {
 
   const navigation = [
     {
-      title: 'Home',
-      path: '/404',
-      subcategories: [],
-    },
-    {
       title: 'Women',
       subcategories: [
         { name: 'New Arrivals', units: 20 },
@@ -259,6 +254,11 @@ export default function App() {
         { name: 'Unisex', units: 19 },
         { name: 'Home', units: 8 },
       ]
+    },
+    {
+      title: 'Home & Living',
+      path: '/404',
+      subcategories: [],
     },
     {
       title: 'Sale',
@@ -1145,7 +1145,7 @@ export default function App() {
           className="w-full flex justify-center"
           style={{ overflow: isScrollingDown && !isDesktopDropdownOpen ? 'hidden' : 'visible' }}
         >
-          <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-7 xl:gap-10 font-semibold text-[0.98rem] xl:text-[1.06rem] tracking-[0.16em] uppercase transition-all duration-300 ${isScrolled ? 'py-1 text-stone-700' : 'py-2 text-stone-800'}`}>
+          <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-6 xl:gap-8 font-semibold text-[0.92rem] xl:text-[1rem] tracking-[0.15em] uppercase transition-all duration-300 ${isScrolled ? 'py-1 text-stone-700' : 'py-2 text-stone-800'}`}>
             {navigation.map((item) => (
               <div
                 key={item.title}
@@ -1948,38 +1948,39 @@ export default function App() {
             {[
               {
                 title: 'Women',
-                cta: 'Shop Women',
+                cta: 'Shop Now',
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?w=864&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?w=864&ssl=1 864w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=819%2C1024&ssl=1 819w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=1229%2C1536&ssl=1 1229w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6522-scaled.jpg?resize=1639%2C2048&ssl=1 1639w',
               },
               {
                 title: 'Men',
-                cta: 'Shop Men',
+                cta: 'Shop Now',
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?w=2048&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?w=2048&ssl=1 2048w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?resize=819%2C1024&ssl=1 819w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?resize=1229%2C1536&ssl=1 1229w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5487-1-1-scaled.jpg?resize=1639%2C2048&ssl=1 1639w',
               },
               {
                 title: 'Kids',
-                cta: 'Shop Kids',
+                cta: 'Shop Now',
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?w=864&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?w=864&ssl=1 864w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2026/01/DSC_5880.jpg?resize=819%2C1024&ssl=1 819w',
               },
               {
                 title: 'Fragrance',
-                cta: 'Shop Fragrance',
+                cta: 'Shop Now',
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?w=2047&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?w=2047&ssl=1 2047w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=240%2C300&ssl=1 240w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=768%2C960&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=819%2C1024&ssl=1 819w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=1228%2C1536&ssl=1 1228w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2025/09/d35246f2-017e-41eb-96c4-c7ae49a34b45.jpeg?resize=1638%2C2048&ssl=1 1638w',
               },
               {
                 title: 'Body Care',
-                cta: 'Shop Body Care',
+                cta: 'Shop Now',
                 img: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?w=1181&ssl=1',
                 srcSet: 'https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?w=1181&ssl=1 1181w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=800%2C800&ssl=1 800w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=150%2C150&ssl=1 150w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=300%2C300&ssl=1 300w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=768%2C768&ssl=1 768w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=1024%2C1024&ssl=1 1024w, https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2023/09/Body.jpg?resize=600%2C600&ssl=1 600w',
               },
               {
-                title: 'Home Fragrances',
-                cta: 'Shop Home Fragrances',
-                img: 'https://www.wansatibrands.co.za/wp-content/uploads/2023/09/Diffuser-1.jpg',
+                title: 'Home & Living',
+                cta: 'Shop Now',
+                img: 'https://assets.superbalistcdn.co.za/798x1150/filters:quality(90):format(jpg)/4795718/original.jpg',
+                path: '/404',
               },
             ].map((cat, idx) => (
               <motion.div
@@ -1989,7 +1990,7 @@ export default function App() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
                 className="luxury-card relative group cursor-pointer w-full overflow-hidden bg-stone-50 flex min-h-full flex-col items-center border border-stone-100 shadow-sm hover:shadow-md"
-                onClick={() => navigateTo(getCollectionPathByLabel(cat.title))}
+                onClick={() => navigateTo(cat.path ?? getCollectionPathByLabel(cat.title))}
                 onMouseLeave={() => setRevealedCategoryIdx(null)}
               >
                 <div className="luxury-image-frame w-[90%] aspect-[4/5] mt-3 md:mt-4 relative overflow-hidden shadow-sm">
@@ -2021,7 +2022,7 @@ export default function App() {
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        navigateTo(getCollectionPathByLabel(cat.title));
+                        navigateTo(cat.path ?? getCollectionPathByLabel(cat.title));
                       }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
