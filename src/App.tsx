@@ -39,6 +39,7 @@ import CollectionPage from './CollectionPage';
 import NotFoundPage from './NotFoundPage';
 import ProductListingPage from './ProductListingPage';
 import ContactPage from './ContactPage';
+import AboutPage from './AboutPage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -211,6 +212,11 @@ export default function App() {
 
   const navigation = [
     {
+      title: 'Home',
+      path: '/404',
+      subcategories: [],
+    },
+    {
       title: 'Women',
       subcategories: [
         { name: 'New Arrivals', units: 20 },
@@ -300,6 +306,7 @@ export default function App() {
   const isWishlistPage = currentPath === '/wishlist';
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
+  const isAboutPage = currentPath === '/about' || currentPath === '/about/';
   const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/')[0]
@@ -312,6 +319,7 @@ export default function App() {
     (!isHomePage &&
       !isProductPage &&
       !isCollectionPage &&
+      !isAboutPage &&
       !isContactPage &&
       !isShopPage &&
       !isWishlistPage &&
@@ -915,7 +923,7 @@ export default function App() {
                               <div className="flex items-center gap-3">
                                 <button
                                   type="button"
-                                  onClick={() => navigateTo(getNestedProductListingPathByLabels(item.title))}
+                                  onClick={() => navigateTo(item.path ?? getNestedProductListingPathByLabels(item.title))}
                                   className={`flex-1 py-1 text-left font-bold text-lg transition-colors ${
                                     item.highlight ? 'text-red-600 hover:text-red-500' : 'text-stone-900 hover:text-stone-600'
                                   }`}
@@ -993,13 +1001,6 @@ export default function App() {
           </>
         )}
       </AnimatePresence>
-
-      {/* Top Banner */}
-      <div className="bg-white/40 backdrop-blur-sm text-xs py-1.5 px-4 flex justify-center items-center sm:px-8 border-b border-stone-100/60">
-        <div className="text-center font-bold tracking-[0.24em] uppercase text-[#8b765e]">
-          Free Delivery over R1000
-        </div>
-      </div>
 
       {/* Header */}
       <header
@@ -1175,7 +1176,7 @@ export default function App() {
               >
                 <button
                   type="button"
-                  onClick={() => navigateTo(getNestedProductListingPathByLabels(item.title))}
+                  onClick={() => navigateTo(item.path ?? getNestedProductListingPathByLabels(item.title))}
                   className={`premium-nav-link transition-colors flex items-center gap-1 ${
                     item.highlight ? 'text-red-600 hover:text-red-500' : 'hover:text-stone-500'
                   }`}
@@ -1243,6 +1244,8 @@ export default function App() {
             navigateTo={navigateTo}
             onAddToWishlist={handleAddProductToWishlist}
           />
+        ) : isAboutPage ? (
+          <AboutPage navigateTo={navigateTo} />
         ) : isContactPage ? (
           <ContactPage navigateTo={navigateTo} />
         ) : isWishlistPage ? (
@@ -2413,7 +2416,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
               {/* Image Block */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -2429,14 +2432,12 @@ export default function App() {
                   />
                   <div className="absolute -bottom-4 -right-4 w-full h-full border border-stone-200 -z-10" />
                 </div>
-                {/* Floating Micro-label */}
                 <div className="absolute top-8 -left-4 bg-[#1c1a17] text-white px-4 py-2 text-[10px] uppercase font-bold tracking-[0.3em] rotate-90 origin-left">
                   Our Heritage
                 </div>
               </motion.div>
 
-              {/* Text Side - Horizontal section but text blocks are stacked */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -2444,24 +2445,22 @@ export default function App() {
                 className="md:col-span-12 lg:col-span-7 flex flex-col"
               >
                 <div className="mb-10">
-                  <span className="text-[10px] uppercase font-bold tracking-[0.4em] text-stone-400 mb-4 block">Our Story</span>
-                  <h2 className="font-serif text-4xl md:text-5xl text-stone-900 mb-2 leading-[1.1] tracking-tighter">
-                    The Meaning <br/>
+                  <span className="mb-4 block text-[10px] font-bold uppercase tracking-[0.4em] text-stone-400">Our Story</span>
+                  <h2 className="font-serif text-4xl leading-[1.1] tracking-tighter text-stone-900 md:text-5xl">
+                    The Meaning <br />
                     <span className="italic text-stone-400">of</span> Wansati
                   </h2>
                 </div>
-                
-                <div className="flex flex-col space-y-12 items-start">
-                  {/* Definition Block */}
-                  <div className="space-y-4 max-w-2xl">
+
+                <div className="flex flex-col items-start space-y-12">
+                  <div className="max-w-2xl space-y-4">
                     <div className="h-px w-16 bg-stone-300" />
-                    <p className="text-xl md:text-2xl text-stone-600 font-serif leading-relaxed italic">
-                      "Wansati means woman in <span className="text-stone-900 font-bold not-italic">Xitsonga</span> — a name that carries confidence, culture, softness, strength, and timeless elegance."
+                    <p className="font-serif text-xl italic leading-relaxed text-stone-600 md:text-2xl">
+                      "Wansati means woman in <span className="font-bold not-italic text-stone-900">Xitsonga</span> — a name that carries confidence, culture, softness, strength, and timeless elegance."
                     </p>
                   </div>
 
-                  {/* Mission Block */}
-                  <div className="space-y-6 text-stone-500 text-sm leading-relaxed tracking-wide max-w-2xl">
+                  <div className="max-w-2xl space-y-6 text-sm leading-relaxed tracking-wide text-stone-500">
                     <div className="h-px w-16 bg-stone-300" />
                     <p>
                       Wansati Brand is a lifestyle label for everyone. We create fashion, fragrance, bags, and home care that celebrate confidence, culture, and every day elegance.
@@ -2471,23 +2470,26 @@ export default function App() {
                     </p>
                   </div>
 
-                  {/* Tagline Block */}
-                  <div className="flex flex-col space-y-8 items-start w-full max-w-2xl">
+                  <div className="flex w-full max-w-2xl flex-col items-start space-y-8">
                     <div className="h-px w-16 bg-stone-300" />
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, x: 20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.8 }}
                       className="relative"
                     >
-                      <span className="absolute -left-8 -top-6 text-6xl text-stone-900/5 font-serif select-none pointer-events-none">“</span>
-                      <blockquote className="font-serif italic tracking-tight text-2xl md:text-3xl text-stone-900 leading-relaxed relative z-10">
-                        Be bold. Be soft. Be powerful. Be <span className="font-bold not-italic text-[1.1em] text-stone-950">Wansati.</span>
+                      <span className="pointer-events-none absolute -left-8 -top-6 select-none font-serif text-6xl text-stone-900/5">“</span>
+                      <blockquote className="relative z-10 font-serif text-2xl italic leading-relaxed tracking-tight text-stone-900 md:text-3xl">
+                        Be bold. Be soft. Be powerful. Be <span className="text-[1.1em] font-bold not-italic text-stone-950">Wansati.</span>
                       </blockquote>
                     </motion.div>
                     <div className="pt-4">
-                      <button className="btn-gold-textured px-10 py-4 text-xs font-bold tracking-[0.2em] uppercase shadow-lg">
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/about')}
+                        className="btn-gold-textured px-10 py-4 text-xs font-bold uppercase tracking-[0.2em] shadow-lg"
+                      >
                         Read Our Story
                       </button>
                     </div>
@@ -2587,13 +2589,15 @@ export default function App() {
                 referrerPolicy="no-referrer"
               />
               <p className="text-stone-400 text-sm leading-relaxed mb-6">
-                Bold fashion, rich culture, confident living — made for African women.
+                Bold fashion, rich culture, confident living made for African women.
               </p>
               <div className="flex space-x-4 text-stone-300">
                 <a href="#" className="hover:text-white transition-colors" aria-label="Facebook"><Facebook size={18} /></a>
                 <a href="#" className="hover:text-white transition-colors" aria-label="Instagram"><Instagram size={18} /></a>
-                <a href="#" className="hover:text-white transition-colors font-medium text-sm flex items-center">
-                  <span>TikTok</span>
+                <a href="#" className="hover:text-white transition-colors" aria-label="TikTok">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] fill-current">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.35V2h-3.2v13.01a2.89 2.89 0 1 1-2.89-2.89c.23 0 .45.03.66.08V8.94a6.1 6.1 0 0 0-.66-.04A6.11 6.11 0 1 0 15.82 15V8.36a8.04 8.04 0 0 0 4.77 1.57V6.75c-.35 0-.69-.02-1-.06Z" />
+                  </svg>
                 </a>
               </div>
             </div>
@@ -2603,7 +2607,7 @@ export default function App() {
               <h4 className="font-bold tracking-wider mb-6 text-sm uppercase">Quick Links</h4>
               <ul className="space-y-3 text-stone-400 text-sm">
                 <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
+                <li><button type="button" onClick={() => navigateTo('/about')} className="hover:text-white transition-colors">About Us</button></li>
                 <li><button type="button" onClick={() => navigateTo(productListingPath())} className="hover:text-white transition-colors">Shop</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
                 <li><button type="button" onClick={() => navigateTo('/contact')} className="hover:text-white transition-colors">Contact</button></li>

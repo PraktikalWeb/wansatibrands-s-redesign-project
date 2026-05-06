@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowRight, Heart, Search, SlidersHorizontal, X } from 'lucide-react';
+import { ArrowRight, ChevronDown, Filter, Heart, Search, SlidersHorizontal, X } from 'lucide-react';
 import {
   COLLECTION_PRODUCTS,
   CollectionDefinition,
@@ -195,6 +195,54 @@ function FilterPanel({
   clearFilters,
   hasActiveFilters,
 }: FilterPanelProps) {
+  const isAccordionLayout = !showSearch;
+  const [openSections, setOpenSections] = useState({
+    category: false,
+    availability: false,
+    price: false,
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections((current) => ({
+      ...current,
+      [section]: !current[section],
+    }));
+  };
+
+  const renderSection = (
+    section: keyof typeof openSections,
+    label: string,
+    content: React.ReactNode,
+  ) => {
+    const isOpen = isAccordionLayout ? openSections[section] : true;
+
+    return (
+      <div className={isAccordionLayout ? 'border-b border-stone-300 pb-4' : ''}>
+        <button
+          type="button"
+          onClick={isAccordionLayout ? () => toggleSection(section) : undefined}
+          className={`flex w-full items-center justify-between gap-4 ${
+            isAccordionLayout ? 'py-1 text-left' : 'mb-3 cursor-default text-left'
+          }`}
+        >
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-stone-400">{label}</p>
+          {isAccordionLayout ? (
+            <ChevronDown
+              className={`h-4 w-4 shrink-0 text-stone-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              strokeWidth={1.6}
+            />
+          ) : null}
+        </button>
+
+        {isOpen ? (
+          <div className={isAccordionLayout ? 'pt-3' : ''}>
+            {content}
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-8">
       {showSearch ? (
@@ -234,41 +282,43 @@ function FilterPanel({
         </div>
       ) : null}
 
-      {categoryOptions.length > 0 ? (
-        <div>
-          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.24em] text-stone-400">{categoryFilterLabel}</p>
-          <div className="space-y-2">
-            {categoryOptions.map((option) => {
-              const isSelected = selectedCategorySlugs.includes(option.value);
+      {categoryOptions.length > 0
+        ? renderSection(
+            'category',
+            categoryFilterLabel,
+            <div className="space-y-2">
+              {categoryOptions.map((option) => {
+                const isSelected = selectedCategorySlugs.includes(option.value);
 
-              return (
-                <label
-                  key={option.value}
-                  className={`flex cursor-pointer items-center justify-between border px-4 py-3 transition-colors ${
-                    isSelected
-                      ? 'border-stone-900 bg-stone-50 text-stone-900'
-                      : 'border-stone-300 bg-white text-stone-700 hover:border-stone-900 hover:text-stone-900'
-                  }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleCategorySlug(option.value)}
-                      className="h-4 w-4 rounded border-stone-300 text-stone-900 focus:ring-stone-500"
-                    />
-                    <span className="text-sm">{option.label}</span>
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-400">{option.count}</span>
-                </label>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
+                return (
+                  <label
+                    key={option.value}
+                    className={`flex cursor-pointer items-center justify-between border px-4 py-3 transition-colors ${
+                      isSelected
+                        ? 'border-stone-900 bg-stone-50 text-stone-900'
+                        : 'border-stone-300 bg-white text-stone-700 hover:border-stone-900 hover:text-stone-900'
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleCategorySlug(option.value)}
+                        className="h-4 w-4 rounded border-stone-300 text-stone-900 focus:ring-stone-500"
+                      />
+                      <span className="text-sm">{option.label}</span>
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-400">{option.count}</span>
+                  </label>
+                );
+              })}
+            </div>,
+          )
+        : null}
 
-      <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.24em] text-stone-400">Availability</p>
+      {renderSection(
+        'availability',
+        'Availability',
         <div className="space-y-2">
           {availabilityOptions.map((option) => (
             <button
@@ -287,11 +337,12 @@ function FilterPanel({
               </span>
             </button>
           ))}
-        </div>
-      </div>
+        </div>,
+      )}
 
-      <div>
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.24em] text-stone-400">Price</p>
+      {renderSection(
+        'price',
+        'Price',
         <div className="space-y-2">
           {priceOptions.map((option) => (
             <button
@@ -307,8 +358,8 @@ function FilterPanel({
               {option.label}
             </button>
           ))}
-        </div>
-      </div>
+        </div>,
+      )}
     </div>
   );
 }
@@ -332,6 +383,7 @@ export default function ProductListingPage({
   const [priceFilter, setPriceFilter] = useState<PriceFilter>('all');
   const [sortBy, setSortBy] = useState<SortBy>('featured');
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(true);
 
   const baseProducts = useMemo(() => {
     if (!activeCollection) return COLLECTION_PRODUCTS;
@@ -577,24 +629,59 @@ export default function ProductListingPage({
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
+        <div
+          className={`grid gap-8 transition-[grid-template-columns] duration-300 lg:gap-10 ${
+            isDesktopFilterOpen
+              ? 'lg:grid-cols-[280px_minmax(0,1fr)]'
+              : 'lg:grid-cols-[72px_minmax(0,1fr)]'
+          }`}
+        >
           <aside className="hidden lg:block">
-            <div className="plp-filter-sidebar sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto border-r border-stone-300 bg-[#fcfaf5] px-5 py-6">
-              <FilterPanel
-                showSearch={false}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                categoryFilterLabel={categoryFilterLabel}
-                categoryOptions={categoryOptions}
-                selectedCategorySlugs={selectedCategorySlugs}
-                toggleCategorySlug={toggleCategorySlug}
-                availabilityFilter={availabilityFilter}
-                setAvailabilityFilter={setAvailabilityFilter}
-                priceFilter={priceFilter}
-                setPriceFilter={setPriceFilter}
-                clearFilters={clearFilters}
-                hasActiveFilters={hasActiveFilters}
-              />
+            <div className="sticky top-28 h-[calc(100vh-8rem)] overflow-hidden border-r border-stone-300 bg-[#fcfaf5]">
+              <button
+                type="button"
+                onClick={() => setIsDesktopFilterOpen((current) => !current)}
+                className={`flex w-full border-b border-stone-300 text-left transition-all duration-300 ${
+                  isDesktopFilterOpen
+                    ? 'items-center justify-between gap-4 px-5 py-6'
+                    : 'flex-col items-center gap-3 px-3 py-5'
+                }`}
+              >
+                <div className={`flex ${isDesktopFilterOpen ? 'items-center gap-3' : 'flex-col items-center gap-3'}`}>
+                  <Filter className="h-4 w-4 shrink-0 text-stone-500" strokeWidth={1.8} />
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-[0.28em] text-stone-400 ${
+                      isDesktopFilterOpen ? '' : '[writing-mode:vertical-rl] rotate-180'
+                    }`}
+                  >
+                    Filter
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 text-stone-500 transition-transform ${isDesktopFilterOpen ? 'rotate-180' : '-rotate-90'}`}
+                  strokeWidth={1.6}
+                />
+              </button>
+
+              {isDesktopFilterOpen ? (
+                <div className="plp-filter-sidebar min-h-0 flex-1 overflow-y-auto px-5 py-6">
+                  <FilterPanel
+                    showSearch={false}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    categoryFilterLabel={categoryFilterLabel}
+                    categoryOptions={categoryOptions}
+                    selectedCategorySlugs={selectedCategorySlugs}
+                    toggleCategorySlug={toggleCategorySlug}
+                    availabilityFilter={availabilityFilter}
+                    setAvailabilityFilter={setAvailabilityFilter}
+                    priceFilter={priceFilter}
+                    setPriceFilter={setPriceFilter}
+                    clearFilters={clearFilters}
+                    hasActiveFilters={hasActiveFilters}
+                  />
+                </div>
+              ) : null}
             </div>
           </aside>
 
