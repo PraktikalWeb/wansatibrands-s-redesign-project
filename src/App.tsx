@@ -79,10 +79,13 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const [isScrollingDown, setIsScrollingDown] = useState(() => (window.location.pathname || '/') !== '/');
+  const [currentScrollY, setCurrentScrollY] = useState(() => window.scrollY);
   const [activeSidePanel, setActiveSidePanel] = useState<'wishlist' | 'cart' | null>(null);
   const [showCoupon, setShowCoupon] = useState(false);
   const [expandedMobileCategories, setExpandedMobileCategories] = useState<string[]>([]);
+  const [activeDesktopDropdown, setActiveDesktopDropdown] = useState<string | null>(null);
+  const [desktopDropdownScrollOrigin, setDesktopDropdownScrollOrigin] = useState<number | null>(null);
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
     {
       id: 'wish-1',
@@ -121,14 +124,28 @@ export default function App() {
     },
   ]);
   const [revealedCategoryIdx, setRevealedCategoryIdx] = useState<number | null>(null);
-  const scrollStateRef = useRef({ isDown: false, lastToggleTime: 0 });
+  const scrollStateRef = useRef({
+    isDown: (window.location.pathname || '/') !== '/',
+    lastToggleTime: 0,
+  });
+
+  const syncNavVisibilityForPath = (path: string) => {
+    const shouldHideDesktopNav = path !== '/';
+    scrollStateRef.current.isDown = shouldHideDesktopNav;
+    scrollStateRef.current.lastToggleTime = Date.now();
+    setIsScrollingDown(shouldHideDesktopNav);
+  };
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPath(window.location.pathname || '/');
+      const nextPath = window.location.pathname || '/';
+      setCurrentPath(nextPath);
       setActiveSidePanel(null);
       setIsMenuOpen(false);
       setIsSearchOpen(false);
+      setActiveDesktopDropdown(null);
+      setDesktopDropdownScrollOrigin(null);
+      syncNavVisibilityForPath(nextPath);
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -145,11 +162,15 @@ export default function App() {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const currentScrollY = Math.max(0, window.scrollY);
+          setCurrentScrollY(currentScrollY);
           setIsScrolled(currentScrollY > 20);
           
           const now = Date.now();
           // Provide a 450ms cooldown after the menu toggles to ignore browser layout-shift scroll events
-          if (now - scrollStateRef.current.lastToggleTime > 450) {
+          if (activeDesktopDropdown) {
+            scrollStateRef.current.isDown = false;
+            setIsScrollingDown(false);
+          } else if (now - scrollStateRef.current.lastToggleTime > 450) {
             
             if (currentScrollY > lastScrollY) {
               // Scrolling down
@@ -184,7 +205,7 @@ export default function App() {
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [activeDesktopDropdown]);
 
   const navigation = [
     {
@@ -384,6 +405,27 @@ export default function App() {
     }
   };
 
+  const isDesktopDropdownOpen = activeDesktopDropdown !== null;
+  const desktopHeaderOffset = isDesktopDropdownOpen && desktopDropdownScrollOrigin !== null
+    ? Math.min(0, desktopDropdownScrollOrigin - currentScrollY)
+    : 0;
+
+  const openDesktopDropdown = (title: string) => {
+    setActiveDesktopDropdown(title);
+    setDesktopDropdownScrollOrigin((prev) => prev ?? window.scrollY);
+    scrollStateRef.current.isDown = false;
+    scrollStateRef.current.lastToggleTime = Date.now();
+    setIsScrollingDown(false);
+  };
+
+  const closeDesktopDropdown = () => {
+    setActiveDesktopDropdown(null);
+    setDesktopDropdownScrollOrigin(null);
+    scrollStateRef.current.isDown = false;
+    scrollStateRef.current.lastToggleTime = Date.now();
+    setIsScrollingDown(false);
+  };
+
   const navigateTo = (path: string) => {
     const nextPath = path || '/';
 
@@ -395,6 +437,8 @@ export default function App() {
     setActiveSidePanel(null);
     setIsMenuOpen(false);
     setIsSearchOpen(false);
+    closeDesktopDropdown();
+    syncNavVisibilityForPath(nextPath);
     window.scrollTo(0, 0);
   };
 
@@ -954,7 +998,14 @@ export default function App() {
       </div>
 
       {/* Header */}
-      <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}>
+      <header
+        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}
+        style={{
+          transform: desktopHeaderOffset === 0 ? undefined : `translateY(${desktopHeaderOffset}px)`,
+          transition: 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)',
+          willChange: isDesktopDropdownOpen ? 'transform' : undefined,
+        }}
+      >
         {/* Mobile Search Overlay */}
         <AnimatePresence>
           {isSearchOpen && (
@@ -1030,12 +1081,12 @@ export default function App() {
             </button>
 
             {/* Account (Desktop Only) */}
-            <div className="luxury-icon-control hidden lg:flex flex-col items-center justify-center cursor-pointer hover:text-stone-600 relative group">
+            <div className="luxury-icon-control hidden lg:flex flex-col items-center justify-center cursor-pointer hover:text-stone-600 relative group z-[80] hover:z-[80] focus-within:z-[80]">
               <User size={20} strokeWidth={1.5} />
               <span className="text-[10px] uppercase font-medium mt-1">Account</span>
               
               {/* Account Dropdown */}
-              <div className="absolute top-full right-0 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
+              <div className="absolute top-full right-0 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[90]">
                 <div className="max-w-[calc(100vw-2rem)] min-w-[220px] w-[min(30vw,320px)] border border-stone-100 bg-white py-4 shadow-xl backdrop-blur-sm">
                   <div className="mb-2 border-b border-stone-50 px-6 py-3">
                     <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-stone-400">Welcome</p>
@@ -1082,16 +1133,42 @@ export default function App() {
         <motion.div
           initial={false}
           animate={{
-            height: isScrollingDown ? 0 : 'auto',
-            opacity: isScrollingDown ? 0 : 1,
+            height: isScrollingDown && !isDesktopDropdownOpen ? 0 : 'auto',
+            opacity: isScrollingDown && !isDesktopDropdownOpen ? 0 : 1,
           }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           className="w-full flex justify-center"
-          style={{ overflow: isScrollingDown ? 'hidden' : 'visible' }}
+          style={{ overflow: isScrollingDown && !isDesktopDropdownOpen ? 'hidden' : 'visible' }}
         >
-          <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-7 xl:gap-10 font-semibold text-[0.98rem] xl:text-[1.06rem] tracking-[0.16em] text-stone-800 uppercase transition-all duration-300 ${isScrolled ? 'py-1 opacity-90' : 'py-2 opacity-100'}`}>
+          <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-7 xl:gap-10 font-semibold text-[0.98rem] xl:text-[1.06rem] tracking-[0.16em] uppercase transition-all duration-300 ${isScrolled ? 'py-1 text-stone-700' : 'py-2 text-stone-800'}`}>
             {navigation.map((item) => (
-              <div key={item.title} className="group py-1.5">
+              <div
+                key={item.title}
+                className="group py-1.5"
+                onMouseEnter={() => {
+                  if (item.subcategories.length > 0) {
+                    openDesktopDropdown(item.title);
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (item.subcategories.length > 0) {
+                    closeDesktopDropdown();
+                  }
+                }}
+                onFocusCapture={() => {
+                  if (item.subcategories.length > 0) {
+                    openDesktopDropdown(item.title);
+                  }
+                }}
+                onBlurCapture={(event) => {
+                  if (
+                    item.subcategories.length > 0 &&
+                    !event.currentTarget.contains(event.relatedTarget as Node | null)
+                  ) {
+                    closeDesktopDropdown();
+                  }
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
