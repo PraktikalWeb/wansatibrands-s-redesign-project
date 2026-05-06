@@ -1552,10 +1552,14 @@ export default function App() {
                             </div>
                           </div>
 
-                          <div className="col-span-2 mt-2 flex w-full items-center gap-3 text-left text-sm font-bold text-stone-900 md:mt-0 md:w-auto lg:block lg:text-right">
-                            <span className="shrink-0 text-xs text-stone-400 lg:hidden">Total:</span>
-                            <span className="h-px flex-1 bg-stone-100 lg:hidden" aria-hidden="true" />
-                            <span className="shrink-0">{formatRand(item.unitPrice * item.quantity)}</span>
+                          <div className="col-span-2 mt-2 w-full md:mt-0 md:w-auto">
+                            <div className="flex items-center justify-between border border-stone-200 bg-stone-100 px-3 py-2 text-sm font-bold text-stone-900 lg:hidden">
+                              <span className="text-xs text-stone-500">Total:</span>
+                              <span>{formatRand(item.unitPrice * item.quantity)}</span>
+                            </div>
+                            <div className="hidden text-right text-sm font-bold text-stone-900 lg:block">
+                              {formatRand(item.unitPrice * item.quantity)}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -1660,13 +1664,13 @@ export default function App() {
                               />
                             </div>
 
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center justify-between gap-4">
                               <img
                                 src={yocoLogo}
                                 alt="Yoco"
                                 className="h-4 w-auto shrink-0 opacity-85"
                               />
-                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2 sm:justify-end">
+                              <div className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
                                 {yocoAcceptedCards.map((card) => (
                                   <img
                                     key={card.name}
@@ -2644,13 +2648,13 @@ export default function App() {
                     className="h-5 w-auto opacity-80"
                   />
                 </div>
-                <div className="flex flex-col gap-2 md:items-end">
+                <div className="flex items-center justify-between gap-4 md:min-w-[19rem]">
                   <img
                     src={yocoLogo}
                     alt="Yoco"
                     className="h-4 w-auto opacity-85"
                   />
-                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2 md:justify-end">
+                  <div className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
                     {yocoAcceptedCards.map((card) => (
                       <img
                         key={card.name}
