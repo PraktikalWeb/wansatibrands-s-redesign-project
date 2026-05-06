@@ -67,6 +67,13 @@ export const getCollectionPathByLabel = (label: string) => {
   return slug ? collectionPath(slug) : collectionPath();
 };
 
+export const productListingPath = (slug?: string) => (slug ? `/shop/${slug}` : '/shop');
+
+export const getProductListingPathByLabel = (label: string) => {
+  const slug = collectionLabelToSlug[label];
+  return slug ? productListingPath(slug) : productListingPath();
+};
+
 export const COLLECTION_PRODUCTS: CollectionProduct[] = [
   {
     id: 'rhulani-dress',

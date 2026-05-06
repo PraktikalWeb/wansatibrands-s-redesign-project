@@ -36,7 +36,15 @@ import yocoMastercardLogo from './assets/payment/yoco-mastercard.svg';
 import yocoMasterpassLogo from './assets/payment/yoco-masterpass.svg';
 import SingleProductPage from './SingleProductPage';
 import CollectionPage from './CollectionPage';
-import { collectionPath, getCollectionPathByLabel } from './collectionData';
+import NotFoundPage from './NotFoundPage';
+import ProductListingPage from './ProductListingPage';
+import {
+  collectionPath,
+  getCollectionBySlug,
+  getCollectionPathByLabel,
+  getProductListingPathByLabel,
+  productListingPath,
+} from './collectionData';
 
 type WishlistItem = {
   id: string;
@@ -269,6 +277,20 @@ export default function App() {
   const isWishlistPage = currentPath === '/wishlist';
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
+  const shopSlugFromPath = currentPath.startsWith('/shop/')
+    ? currentPath.replace('/shop/', '').split('/')[0]
+    : '';
+  const currentShopCollection = shopSlugFromPath ? getCollectionBySlug(shopSlugFromPath) : undefined;
+  const isShopPage = currentPath === '/shop' || currentPath === '/shop/' || Boolean(currentShopCollection);
+  const isHomePage = currentPath === '/';
+  const isNotFoundPage =
+    currentPath === '/404' ||
+    (!isHomePage &&
+      !isProductPage &&
+      !isCollectionPage &&
+      !isShopPage &&
+      !isWishlistPage &&
+      !isCartPage);
   const displayedItems = isCartPanel ? cartItems : wishlistItems;
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const cartSubtotal = cartItems.reduce((total, item) => total + (item.unitPrice * item.quantity), 0);
@@ -887,7 +909,7 @@ export default function App() {
                                     <li>
                                       <button
                                         type="button"
-                                        onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
+                                        onClick={() => navigateTo(getProductListingPathByLabel(item.title))}
                                         className="block py-2.5 text-xs font-bold uppercase tracking-[0.18em] text-stone-400 underline underline-offset-4 transition-colors hover:text-stone-900"
                                       >
                                         {shopAllLabelByTitle[item.title] ?? `Shop All ${item.title}`}
@@ -1105,7 +1127,7 @@ export default function App() {
                       <div className="mt-8 border-t border-stone-100 pt-5">
                         <button
                           type="button"
-                          onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
+                          onClick={() => navigateTo(getProductListingPathByLabel(item.title))}
                           className="text-xs font-bold text-stone-400 transition-colors tracking-[0.14em] underline underline-offset-4 hover:text-stone-900"
                         >
                           {shopAllLabelByTitle[item.title] ?? `Shop All ${item.title}`}
@@ -1126,6 +1148,12 @@ export default function App() {
             currentPath={currentPath}
             navigateTo={navigateTo}
             onAddToCart={handleAddProductToCart}
+            onAddToWishlist={handleAddProductToWishlist}
+          />
+        ) : isShopPage ? (
+          <ProductListingPage
+            currentPath={currentPath}
+            navigateTo={navigateTo}
             onAddToWishlist={handleAddProductToWishlist}
           />
         ) : isCollectionPage ? (
@@ -1721,7 +1749,7 @@ export default function App() {
               </div>
             </section>
           </>
-        ) : (
+        ) : isHomePage ? (
           <>
         {/* 1. Hero */}
         <section className="relative w-full h-[76vh] min-h-[600px] md:h-[88vh] md:min-h-[760px] bg-[#f2efe9] flex items-center justify-center overflow-hidden">
@@ -1778,14 +1806,14 @@ export default function App() {
               className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <a
-                href={collectionPath('new-arrivals')}
+                href={productListingPath()}
                 onClick={(event) => {
                   event.preventDefault();
-                  navigateTo(collectionPath('new-arrivals'));
+                  navigateTo(productListingPath());
                 }}
                 className="btn-gold-textured px-8 py-3.5 text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-xl"
               >
-                Shop New Arrivals
+                Shop All Products
               </a>
               <a
                 href={collectionPath()}
@@ -2450,6 +2478,10 @@ export default function App() {
           </div>
         </section>
           </>
+        ) : isNotFoundPage ? (
+          <NotFoundPage navigateTo={navigateTo} />
+        ) : (
+          <NotFoundPage navigateTo={navigateTo} />
         )}
       </main>
 
@@ -2484,7 +2516,7 @@ export default function App() {
               <ul className="space-y-3 text-stone-400 text-sm">
                 <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><button type="button" onClick={() => navigateTo(collectionPath())} className="hover:text-white transition-colors">Shop</button></li>
+                <li><button type="button" onClick={() => navigateTo(productListingPath())} className="hover:text-white transition-colors">Shop</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
               </ul>
