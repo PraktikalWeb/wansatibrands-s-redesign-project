@@ -40,6 +40,7 @@ import NotFoundPage from './NotFoundPage';
 import ProductListingPage from './ProductListingPage';
 import ContactPage from './ContactPage';
 import AboutPage from './AboutPage';
+import BlogPage from './BlogPage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -307,6 +308,7 @@ export default function App() {
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
   const isAboutPage = currentPath === '/about' || currentPath === '/about/';
+  const isBlogPage = currentPath === '/blog' || currentPath === '/blog/';
   const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/')[0]
@@ -320,6 +322,7 @@ export default function App() {
       !isProductPage &&
       !isCollectionPage &&
       !isAboutPage &&
+      !isBlogPage &&
       !isContactPage &&
       !isShopPage &&
       !isWishlistPage &&
@@ -1246,6 +1249,8 @@ export default function App() {
           />
         ) : isAboutPage ? (
           <AboutPage navigateTo={navigateTo} />
+        ) : isBlogPage ? (
+          <BlogPage navigateTo={navigateTo} />
         ) : isContactPage ? (
           <ContactPage navigateTo={navigateTo} />
         ) : isWishlistPage ? (
@@ -1673,13 +1678,13 @@ export default function App() {
                               />
                             </div>
 
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                               <img
                                 src={yocoLogo}
                                 alt="Yoco"
                                 className="h-4 w-auto shrink-0 opacity-85"
                               />
-                              <div className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
+                              <div className="flex w-full flex-wrap items-center gap-x-1.5 gap-y-2 sm:justify-end">
                                 {yocoAcceptedCards.map((card) => (
                                   <img
                                     key={card.name}
@@ -2610,7 +2615,7 @@ export default function App() {
                 <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
                 <li><button type="button" onClick={() => navigateTo('/about')} className="hover:text-white transition-colors">About Us</button></li>
                 <li><button type="button" onClick={() => navigateTo(productListingPath())} className="hover:text-white transition-colors">Shop</button></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><button type="button" onClick={() => navigateTo('/blog')} className="hover:text-white transition-colors">Blog</button></li>
                 <li><button type="button" onClick={() => navigateTo('/contact')} className="hover:text-white transition-colors">Contact</button></li>
               </ul>
             </div>
@@ -2659,13 +2664,13 @@ export default function App() {
                     className="h-5 w-auto opacity-80"
                   />
                 </div>
-                <div className="flex items-center justify-between gap-4 md:min-w-[19rem]">
+                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between md:min-w-[19rem]">
                   <img
                     src={yocoLogo}
                     alt="Yoco"
                     className="h-4 w-auto opacity-85"
                   />
-                  <div className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
+                  <div className="flex w-full flex-wrap items-center gap-x-1.5 gap-y-2 sm:justify-end">
                     {yocoAcceptedCards.map((card) => (
                       <img
                         key={card.name}
