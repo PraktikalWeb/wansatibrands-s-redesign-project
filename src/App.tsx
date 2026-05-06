@@ -38,10 +38,12 @@ import SingleProductPage from './SingleProductPage';
 import CollectionPage from './CollectionPage';
 import NotFoundPage from './NotFoundPage';
 import ProductListingPage from './ProductListingPage';
+import ContactPage from './ContactPage';
 import {
   collectionPath,
   getCollectionBySlug,
   getCollectionPathByLabel,
+  getNestedProductListingPathByLabels,
   getProductListingPathByLabel,
   productListingPath,
 } from './collectionData';
@@ -298,6 +300,7 @@ export default function App() {
   const isWishlistPage = currentPath === '/wishlist';
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
+  const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/')[0]
     : '';
@@ -309,6 +312,7 @@ export default function App() {
     (!isHomePage &&
       !isProductPage &&
       !isCollectionPage &&
+      !isContactPage &&
       !isShopPage &&
       !isWishlistPage &&
       !isCartPage);
@@ -911,7 +915,7 @@ export default function App() {
                               <div className="flex items-center gap-3">
                                 <button
                                   type="button"
-                                  onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
+                                  onClick={() => navigateTo(getNestedProductListingPathByLabels(item.title))}
                                   className={`flex-1 py-1 text-left font-bold text-lg transition-colors ${
                                     item.highlight ? 'text-red-600 hover:text-red-500' : 'text-stone-900 hover:text-stone-600'
                                   }`}
@@ -943,7 +947,7 @@ export default function App() {
                                       <li key={sub.name}>
                                         <button
                                           type="button"
-                                          onClick={() => navigateTo(getCollectionPathByLabel(sub.name))}
+                                          onClick={() => navigateTo(getNestedProductListingPathByLabels(item.title, sub.name))}
                                           className="block py-2 text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors uppercase tracking-wider"
                                         >
                                           {sub.name}
@@ -1171,7 +1175,7 @@ export default function App() {
               >
                 <button
                   type="button"
-                  onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
+                  onClick={() => navigateTo(getNestedProductListingPathByLabels(item.title))}
                   className={`premium-nav-link transition-colors flex items-center gap-1 ${
                     item.highlight ? 'text-red-600 hover:text-red-500' : 'hover:text-stone-500'
                   }`}
@@ -1190,7 +1194,7 @@ export default function App() {
                           <li key={sub.name}>
                             <button
                               type="button"
-                              onClick={() => navigateTo(getCollectionPathByLabel(sub.name))}
+                              onClick={() => navigateTo(getNestedProductListingPathByLabels(item.title, sub.name))}
                               className="group/sub flex w-full items-center justify-between gap-8 text-left text-stone-600 transition-colors hover:text-stone-900"
                             >
                               <span className="pr-6 text-[15px] font-bold tracking-[0.14em] group-hover/sub:translate-x-1 transition-transform">{sub.name}</span>
@@ -1239,6 +1243,8 @@ export default function App() {
             navigateTo={navigateTo}
             onAddToWishlist={handleAddProductToWishlist}
           />
+        ) : isContactPage ? (
+          <ContactPage navigateTo={navigateTo} />
         ) : isWishlistPage ? (
           <>
             <section className="relative overflow-hidden border-b border-stone-200 bg-[#f4ecdf]">
@@ -2600,7 +2606,7 @@ export default function App() {
                 <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
                 <li><button type="button" onClick={() => navigateTo(productListingPath())} className="hover:text-white transition-colors">Shop</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><button type="button" onClick={() => navigateTo('/contact')} className="hover:text-white transition-colors">Contact</button></li>
               </ul>
             </div>
 

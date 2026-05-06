@@ -318,10 +318,14 @@ export default function ProductListingPage({
   navigateTo,
   onAddToWishlist,
 }: ProductListingPageProps) {
-  const slugFromPath = currentPath.startsWith('/shop/')
-    ? currentPath.replace('/shop/', '').split('/')[0]
-    : '';
+  const pathSegments = currentPath.startsWith('/shop/')
+    ? currentPath.replace('/shop/', '').split('/').filter(Boolean)
+    : [];
+  const slugFromPath = pathSegments[0] ?? '';
   const activeCollection = slugFromPath ? getCollectionBySlug(slugFromPath) : undefined;
+  const routeCategorySlugs = pathSegments
+    .slice(1)
+    .filter((slug) => Boolean(getCollectionBySlug(slug)));
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>([]);
   const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all');
@@ -426,6 +430,11 @@ export default function ProductListingPage({
   }, [activeCollection, availabilityFilter, categoryOptions, priceFilter, searchQuery, selectedCategorySlugs]);
 
   const clearFilters = () => {
+    if (activeCollection && routeCategorySlugs.length > 0) {
+      navigateTo(productListingPath(activeCollection.slug));
+      return;
+    }
+
     setSearchQuery('');
     setSelectedCategorySlugs([]);
     setAvailabilityFilter('all');
@@ -443,12 +452,12 @@ export default function ProductListingPage({
 
   useEffect(() => {
     setSearchQuery('');
-    setSelectedCategorySlugs([]);
+    setSelectedCategorySlugs(routeCategorySlugs);
     setAvailabilityFilter('all');
     setPriceFilter('all');
     setSortBy('featured');
     setIsMobileFiltersOpen(false);
-  }, [activeCollection?.slug]);
+  }, [activeCollection?.slug, routeCategorySlugs.join('|')]);
 
   const activeShopCollectionSlug = getActiveShopCollectionSlug(activeCollection);
   const eyebrow = activeCollection ? activeCollection.eyebrow : 'Shop Wansati';

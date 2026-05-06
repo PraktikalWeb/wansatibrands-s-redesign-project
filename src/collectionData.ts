@@ -67,11 +67,49 @@ export const getCollectionPathByLabel = (label: string) => {
   return slug ? collectionPath(slug) : collectionPath();
 };
 
-export const productListingPath = (slug?: string) => (slug ? `/shop/${slug}` : '/shop');
+export const productListingPath = (...slugs: Array<string | undefined>) => {
+  const normalizedSlugs = slugs.filter(Boolean) as string[];
+  return normalizedSlugs.length > 0 ? `/shop/${normalizedSlugs.join('/')}` : '/shop';
+};
 
 export const getProductListingPathByLabel = (label: string) => {
   const slug = collectionLabelToSlug[label];
   return slug ? productListingPath(slug) : productListingPath();
+};
+
+const nestedProductListingPathOverrides: Record<string, Record<string, string[]>> = {
+  Women: {
+    Fragrance: ['fragrances', 'women-fragrance'],
+  },
+  Men: {
+    Fragrance: ['fragrances', 'men-fragrance'],
+  },
+  Fragrance: {
+    Women: ['fragrances', 'women-fragrance'],
+    Men: ['fragrances', 'men-fragrance'],
+    Unisex: ['fragrances', 'unisex-fragrance'],
+    Home: ['fragrances', 'home-fragrance'],
+  },
+};
+
+export const getNestedProductListingPathByLabels = (parentLabel: string, childLabel?: string) => {
+  if (!childLabel) {
+    return getProductListingPathByLabel(parentLabel);
+  }
+
+  const overrideSegments = nestedProductListingPathOverrides[parentLabel]?.[childLabel];
+  if (overrideSegments) {
+    return productListingPath(...overrideSegments);
+  }
+
+  const parentSlug = collectionLabelToSlug[parentLabel];
+  const childSlug = collectionLabelToSlug[childLabel];
+
+  if (!parentSlug) {
+    return getProductListingPathByLabel(childLabel);
+  }
+
+  return childSlug ? productListingPath(parentSlug, childSlug) : productListingPath(parentSlug);
 };
 
 export const COLLECTION_PRODUCTS: CollectionProduct[] = [

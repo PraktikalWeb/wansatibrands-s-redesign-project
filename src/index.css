@@ -27,6 +27,28 @@ body {
   line-height: 1.5;
 }
 
+/* Increase separator contrast across shared chrome and page sections without
+   changing the palette direction of the overall site. */
+:where([class~="border-stone-100/60"]) {
+  border-color: rgba(196, 186, 171, 0.78) !important;
+}
+
+:where([class*="border-stone-50"]) {
+  border-color: #dcd5ca !important;
+}
+
+:where([class*="border-stone-100"]) {
+  border-color: #ccc3b7 !important;
+}
+
+:where([class*="border-stone-200"]) {
+  border-color: #bdb2a3 !important;
+}
+
+:where([class*="border-stone-300"]) {
+  border-color: #aa9d8a !important;
+}
+
 button {
   cursor: pointer !important;
 }
