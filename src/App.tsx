@@ -68,10 +68,10 @@ type CartItem = {
 
 export default function App() {
   const heroImages = [
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6417-1-scaled.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6563-scaled.jpg",
     "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6469-scaled.jpg",
     "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6315-scaled.jpg",
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/12/DSC_6029.jpg"
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6391-scaled.jpg"
   ];
   const [currentPath, setCurrentPath] = useState(() => window.location.pathname || '/');
   const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
@@ -954,7 +954,7 @@ export default function App() {
       </div>
 
       {/* Header */}
-      <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}>
+      <header className={`sticky top-0 z-[1200] bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}>
         {/* Mobile Search Overlay */}
         <AnimatePresence>
           {isSearchOpen && (
@@ -962,7 +962,7 @@ export default function App() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute inset-0 bg-white z-[70] flex items-center px-4"
+              className="absolute inset-0 bg-white z-[1210] flex items-center px-4"
             >
               <div className="flex-1 flex items-center relative py-2">
                 <Search size={18} className="absolute left-3 text-stone-900" />
@@ -1035,7 +1035,7 @@ export default function App() {
               <span className="text-[10px] uppercase font-medium mt-1">Account</span>
               
               {/* Account Dropdown */}
-              <div className="absolute top-full right-0 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
+              <div className="absolute top-full right-0 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[1210]">
                 <div className="max-w-[calc(100vw-2rem)] min-w-[220px] w-[min(30vw,320px)] border border-stone-100 bg-white py-4 shadow-xl backdrop-blur-sm">
                   <div className="mb-2 border-b border-stone-50 px-6 py-3">
                     <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-stone-400">Welcome</p>
@@ -1103,7 +1103,7 @@ export default function App() {
                 </button>
                 
                 {item.subcategories.length > 0 && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[1210]">
                     <div className="max-w-[calc(100vw-2rem)] w-[min(88vw,860px)] border border-stone-100 bg-white px-7 py-7 shadow-2xl backdrop-blur-sm lg:px-8 xl:px-10 xl:py-8">
                       <div className="mb-6 border-b border-stone-50 pb-3 text-xs font-bold tracking-[0.24em] text-stone-400">
                         Explore {item.title}
