@@ -68,10 +68,10 @@ type CartItem = {
 
 export default function App() {
   const heroImages = [
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6563-scaled.jpg",
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6417-1-scaled.jpg",
     "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6469-scaled.jpg",
     "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6315-scaled.jpg",
-    "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6391-scaled.jpg"
+    "https://www.wansatibrands.co.za/wp-content/uploads/2025/12/DSC_6029.jpg"
   ];
   const [currentPath, setCurrentPath] = useState(() => window.location.pathname || '/');
   const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
@@ -80,7 +80,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSidePanel, setActiveSidePanel] = useState<'wishlist' | 'cart' | null>(null);
   const [showCoupon, setShowCoupon] = useState(false);
   const [expandedMobileCategories, setExpandedMobileCategories] = useState<string[]>([]);
@@ -186,17 +185,6 @@ export default function App() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    if (!activeDropdown) return;
-
-    const closeDropdownOnScroll = () => {
-      setActiveDropdown(null);
-    };
-
-    window.addEventListener('scroll', closeDropdownOnScroll, { passive: true });
-    return () => window.removeEventListener('scroll', closeDropdownOnScroll);
-  }, [activeDropdown]);
 
   const navigation = [
     {
@@ -966,7 +954,7 @@ export default function App() {
       </div>
 
       {/* Header */}
-      <header className={`${activeDropdown ? 'relative' : 'sticky top-0'} z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md' : 'shadow-sm'}`}>
+      <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}>
         {/* Mobile Search Overlay */}
         <AnimatePresence>
           {isSearchOpen && (
@@ -1042,16 +1030,12 @@ export default function App() {
             </button>
 
             {/* Account (Desktop Only) */}
-            <div
-              className="luxury-icon-control hidden lg:flex flex-col items-center justify-center cursor-pointer hover:text-stone-600 relative"
-              onMouseEnter={() => setActiveDropdown('account')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
+            <div className="luxury-icon-control hidden lg:flex flex-col items-center justify-center cursor-pointer hover:text-stone-600 relative group">
               <User size={20} strokeWidth={1.5} />
               <span className="text-[10px] uppercase font-medium mt-1">Account</span>
               
               {/* Account Dropdown */}
-              <div className={`absolute top-full right-0 pt-5 transition-all duration-300 z-[1200] ${activeDropdown === 'account' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+              <div className="absolute top-full right-0 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
                 <div className="max-w-[calc(100vw-2rem)] min-w-[220px] w-[min(30vw,320px)] border border-stone-100 bg-white py-4 shadow-xl backdrop-blur-sm">
                   <div className="mb-2 border-b border-stone-50 px-6 py-3">
                     <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-stone-400">Welcome</p>
@@ -1096,7 +1080,7 @@ export default function App() {
 
         {/* Main Nav */}
         <motion.div
-          initial={isHomePage ? false : { height: 0, opacity: 0 }}
+          initial={false}
           animate={{
             height: isScrollingDown ? 0 : 'auto',
             opacity: isScrollingDown ? 0 : 1,
@@ -1107,12 +1091,7 @@ export default function App() {
         >
           <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-7 xl:gap-10 font-semibold text-[0.98rem] xl:text-[1.06rem] tracking-[0.16em] text-stone-800 uppercase transition-all duration-300 ${isScrolled ? 'py-1 opacity-90' : 'py-2 opacity-100'}`}>
             {navigation.map((item) => (
-              <div
-                key={item.title}
-                className="relative py-1.5"
-                onMouseEnter={() => setActiveDropdown(item.title)}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
+              <div key={item.title} className="group py-1.5">
                 <button
                   type="button"
                   onClick={() => navigateTo(getCollectionPathByLabel(item.title))}
@@ -1124,7 +1103,7 @@ export default function App() {
                 </button>
                 
                 {item.subcategories.length > 0 && (
-                  <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-5 transition-all duration-300 z-[60] ${activeDropdown === item.title ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[60]">
                     <div className="max-w-[calc(100vw-2rem)] w-[min(88vw,860px)] border border-stone-100 bg-white px-7 py-7 shadow-2xl backdrop-blur-sm lg:px-8 xl:px-10 xl:py-8">
                       <div className="mb-6 border-b border-stone-50 pb-3 text-xs font-bold tracking-[0.24em] text-stone-400">
                         Explore {item.title}
