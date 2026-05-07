@@ -46,6 +46,7 @@ import AuthPage from './AuthPage';
 import LostPasswordPage from './LostPasswordPage';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
 import CheckoutPage from './CheckoutPage';
+import TermsAndConditionsPage from './TermsAndConditionsPage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -334,6 +335,7 @@ export default function App() {
   const isBlogPage = currentPath === '/blog' || currentPath === '/blog/';
   const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
   const isPrivacyPage = currentPath === '/privacy-policy' || currentPath === '/privacy-policy/';
+  const isTermsPage = currentPath === '/terms-and-conditions' || currentPath === '/terms-and-conditions/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/')[0]
     : '';
@@ -351,6 +353,7 @@ export default function App() {
       !isBlogPage &&
       !isContactPage &&
       !isPrivacyPage &&
+      !isTermsPage &&
       !isLostPasswordPage &&
       !isShopPage &&
       !isCheckoutPage &&
@@ -1311,6 +1314,8 @@ export default function App() {
           <ContactPage navigateTo={navigateTo} />
         ) : isPrivacyPage ? (
           <PrivacyPolicyPage navigateTo={navigateTo} />
+        ) : isTermsPage ? (
+          <TermsAndConditionsPage navigateTo={navigateTo} />
         ) : isCheckoutPage ? (
           <CheckoutPage
             navigateTo={navigateTo}
@@ -2723,6 +2728,7 @@ export default function App() {
                 <li><button type="button" onClick={() => navigateTo('/blog')} className="hover:text-white transition-colors">Blog</button></li>
                 <li><button type="button" onClick={() => navigateTo('/contact')} className="hover:text-white transition-colors">Contact</button></li>
                 <li><button type="button" onClick={() => navigateTo('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button></li>
+                <li><button type="button" onClick={() => navigateTo('/terms-and-conditions')} className="hover:text-white transition-colors">Terms & Conditions</button></li>
               </ul>
             </div>
 
@@ -2797,6 +2803,9 @@ export default function App() {
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] uppercase tracking-[0.14em]">
               <button type="button" onClick={() => navigateTo('/privacy-policy')} className="transition-colors hover:text-white">
                 Privacy Policy
+              </button>
+              <button type="button" onClick={() => navigateTo('/terms-and-conditions')} className="transition-colors hover:text-white">
+                Terms & Conditions
               </button>
               <a href={returnPolicyUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
                 Return Policy

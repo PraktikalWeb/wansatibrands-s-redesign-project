@@ -753,9 +753,11 @@ export default function CheckoutPage({
                         By proceeding with your purchase you agree to our{' '}
                       </label>
                       <a
-                        href="https://www.wansatibrands.co.za/terms-and-conditions/"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href="/terms-and-conditions"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          navigateTo('/terms-and-conditions');
+                        }}
                         className="font-medium text-stone-900 underline underline-offset-4"
                       >
                         Terms and Conditions

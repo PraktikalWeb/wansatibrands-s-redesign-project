@@ -306,6 +306,14 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
                     >
                       privacy policy
                     </button>
+                    {' '}and{' '}
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('/terms-and-conditions')}
+                      className="font-semibold text-stone-900 underline underline-offset-4 transition-colors hover:text-[#8b765e]"
+                    >
+                      terms and conditions
+                    </button>
                     .
                   </p>
 
