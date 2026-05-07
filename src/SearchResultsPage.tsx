@@ -132,14 +132,28 @@ export default function SearchResultsPage({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: index * 0.02 }}
                     onClick={() => onSelectResult(result)}
-                    className="grid w-full gap-5 border border-stone-200 bg-white p-5 text-left transition-colors hover:border-stone-400 hover:bg-[#fcfaf7] md:grid-cols-[120px_minmax(0,1fr)_auto] md:items-center"
+                    className="grid w-full gap-5 border border-stone-200 bg-white p-4 text-left transition-colors hover:border-stone-400 hover:bg-[#fcfaf7] sm:p-5 md:grid-cols-[120px_minmax(0,1fr)_auto] md:items-center"
                   >
-                    <div className="relative h-28 overflow-hidden bg-stone-100 md:h-24 md:w-[120px]">
+                    <div
+                      className={`relative flex items-center justify-center overflow-hidden bg-stone-100 ${
+                        result.kind === 'product'
+                          ? 'aspect-[3/4] w-full md:h-24 md:w-[120px] md:aspect-auto'
+                          : 'h-40 w-full md:h-24 md:w-[120px]'
+                      }`}
+                    >
                       {result.image ? (
                         <img
                           src={result.image}
                           alt={result.title}
-                          className="absolute inset-0 h-full w-full object-cover"
+                          className={`absolute inset-0 h-full w-full ${
+                            result.kind === 'product'
+                              ? result.imageFit === 'contain'
+                                ? 'object-contain p-4'
+                                : 'object-cover object-center'
+                              : result.imageFit === 'contain'
+                                ? 'object-contain p-2'
+                                : 'object-cover'
+                          }`}
                           referrerPolicy="no-referrer"
                         />
                       ) : (

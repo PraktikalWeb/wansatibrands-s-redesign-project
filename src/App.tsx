@@ -385,7 +385,7 @@ export default function App() {
   const wishlistEstimatedValue = wishlistItems.reduce((total, item) => total + item.numericPrice, 0);
   const returnPolicyUrl = '/returns-policy';
   const currentSearchQuery = new URLSearchParams(currentSearch).get('q') ?? '';
-  const searchSuggestions = siteSearchQuery.trim().length > 1
+  const searchSuggestions = siteSearchQuery.trim().length > 0
     ? getSearchSuggestions(siteSearchQuery, isSearchOpen ? 6 : 8)
     : [];
   const yocoAcceptedCards = [
@@ -539,6 +539,17 @@ export default function App() {
   useEffect(() => {
     setActiveSearchIndex(-1);
   }, [siteSearchQuery]);
+
+  useEffect(() => {
+    if (!isSearchOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isSearchOpen]);
 
   const handleSearchSubmit = (query: string) => {
     const trimmedQuery = query.trim();
@@ -1179,80 +1190,84 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <header
-        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}
-        style={{
-          transform: desktopHeaderOffset === 0 ? undefined : `translateY(${desktopHeaderOffset}px)`,
-          transition: 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)',
-          willChange: isDesktopDropdownOpen ? 'transform' : undefined,
-        }}
-      >
-        {/* Mobile Search Overlay */}
-        <AnimatePresence>
-          {isSearchOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="fixed inset-0 z-[120] bg-[rgba(252,252,249,0.98)] px-4 pt-4 pb-6 backdrop-blur-md"
-            >
-              <div className="mx-auto flex h-full w-full max-w-2xl flex-col">
-                <form
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    handleSearchSubmit(siteSearchQuery);
-                  }}
-                  className="relative py-2"
-                >
-                  <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-900" />
-                  <input
-                    autoFocus
-                    type="text"
-                    value={siteSearchQuery}
-                    onChange={(event) => setSiteSearchQuery(event.target.value)}
-                    onKeyDown={handleSearchKeyDown}
-                    placeholder="What are you looking for?"
-                    className="w-full border border-stone-900 bg-white py-3 pl-10 pr-12 text-sm focus:outline-none placeholder:text-stone-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setIsSearchOpen(false)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-900 hover:text-black"
+      {/* Mobile Search Overlay */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-[120] overflow-hidden bg-[rgba(252,252,249,0.98)] px-4 pt-4 pb-6 backdrop-blur-md"
+          >
+            <div className="mx-auto w-full max-w-2xl">
+              <div className="sticky top-0 z-10 bg-[rgba(252,252,249,0.98)] py-2">
+                <div>
+                  <form
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      handleSearchSubmit(siteSearchQuery);
+                    }}
+                    className="relative"
                   >
-                    <X size={20} />
-                  </button>
-                </form>
-
-                <div className="mt-4 min-h-0 flex-1 overflow-y-auto">
-                  {siteSearchQuery.trim().length > 1 ? (
-                    searchSuggestions.length > 0 ? (
-                      <div className="overflow-hidden border border-stone-200 bg-white shadow-[0_24px_64px_rgba(28,26,23,0.08)]">
-                        <div className="flex items-center justify-between gap-4 border-b border-stone-100 px-4 py-3">
-                          <div>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
-                            <p className="mt-1 text-xs text-stone-500">Tap a result or view the full results page.</p>
-                          </div>
-                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8b765e]">
-                            {searchSuggestions.length} found
-                          </span>
+                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-900" />
+                    <input
+                      autoFocus
+                      type="text"
+                      value={siteSearchQuery}
+                      onChange={(event) => setSiteSearchQuery(event.target.value)}
+                      onKeyDown={handleSearchKeyDown}
+                      placeholder="What are you looking for?"
+                      className="w-full border border-stone-900 bg-white py-3 pl-10 pr-12 text-sm focus:outline-none placeholder:text-stone-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsSearchOpen(false)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-900 hover:text-black"
+                    >
+                      <X size={20} />
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div className="pointer-events-none fixed inset-x-4 top-24 bottom-6 z-[130] sm:inset-x-6 sm:top-28">
+              <div className="mx-auto h-full max-w-2xl">
+                {siteSearchQuery.trim().length > 0 ? (
+                  searchSuggestions.length > 0 ? (
+                    <div className="pointer-events-auto flex h-full flex-col overflow-hidden border border-stone-200 bg-white shadow-[0_24px_64px_rgba(28,26,23,0.16)]">
+                      <div className="flex items-center justify-between gap-4 border-b border-stone-100 px-4 py-3">
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
+                          <p className="mt-1 text-xs text-stone-500">Tap a result or open the full search page.</p>
                         </div>
-                        <ul className="max-h-[calc(100vh-15rem)] divide-y divide-stone-100 overflow-y-auto">
+                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8b765e]">
+                          {searchSuggestions.length} found
+                        </span>
+                      </div>
+                      <ul className="flex-1 divide-y divide-stone-100 overflow-y-auto overscroll-contain">
                         {searchSuggestions.map((result, index) => (
                           <li key={result.id}>
                             <button
                               type="button"
                               onClick={() => handleSearchResultSelect(result)}
-                              className={`grid w-full grid-cols-[70px_minmax(0,1fr)] items-start gap-4 px-4 py-4 text-left transition-colors ${
+                              className={`grid w-full grid-cols-[76px_minmax(0,1fr)] items-start gap-4 px-4 py-4 text-left transition-colors ${
                                 index === activeSearchIndex ? 'bg-[#f7f2ea]' : 'hover:bg-stone-50'
                               }`}
                             >
-                              <div className="relative h-[84px] overflow-hidden bg-stone-100">
+                              <div className="relative flex h-24 items-center justify-center overflow-hidden bg-stone-100">
                                 {result.image ? (
                                   <img
                                     src={result.image}
                                     alt={result.title}
-                                    className="absolute inset-0 h-full w-full object-cover"
+                                    className={`absolute inset-0 h-full w-full ${
+                                      result.kind === 'product'
+                                        ? result.imageFit === 'contain'
+                                          ? 'object-contain p-3'
+                                          : 'object-cover object-center'
+                                        : result.imageFit === 'contain'
+                                          ? 'object-contain p-2'
+                                          : 'object-cover'
+                                    }`}
                                     referrerPolicy="no-referrer"
                                   />
                                 ) : (
@@ -1261,7 +1276,7 @@ export default function App() {
                                   </div>
                                 )}
                               </div>
-                              <div className="min-w-0 flex-1">
+                              <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
                                   <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
                                     {result.metaLabel}
@@ -1276,41 +1291,47 @@ export default function App() {
                                   {renderSearchHighlight(result.title, siteSearchQuery)}
                                 </p>
                                 <p className="mt-1 line-clamp-2 text-xs leading-6 text-stone-500">{result.description}</p>
-                                {result.priceLabel ? (
-                                  <p className="mt-2 text-xs font-semibold text-stone-600">{result.priceLabel}</p>
-                                ) : null}
                               </div>
                             </button>
                           </li>
                         ))}
-                        </ul>
-                        <div className="border-t border-stone-200 bg-[#fcfaf5] px-4 py-4">
-                          <button
-                            type="button"
-                            onClick={() => handleSearchSubmit(siteSearchQuery)}
-                            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-700 transition-colors hover:text-stone-900"
-                          >
-                            View all results
-                            <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
-                          </button>
-                        </div>
+                      </ul>
+                      <div className="border-t border-stone-200 bg-[#fcfaf5] px-4 py-4">
+                        <button
+                          type="button"
+                          onClick={() => handleSearchSubmit(siteSearchQuery)}
+                          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-700 transition-colors hover:text-stone-900"
+                        >
+                          View all results
+                          <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                        </button>
                       </div>
-                    ) : (
-                      <div className="border border-stone-200 bg-[#fcfaf5] px-4 py-5">
-                        <p className="text-sm text-stone-600">No quick matches found. Press enter to view full search results.</p>
-                      </div>
-                    )
-                  ) : (
-                    <div className="border border-stone-200 bg-[#fcfaf5] px-4 py-5">
-                      <p className="text-sm text-stone-600">Try a product name, collection, article topic, or page title.</p>
                     </div>
-                  )}
-                </div>
+                  ) : (
+                    <div className="pointer-events-auto border border-stone-200 bg-[#fcfaf5] px-4 py-5 shadow-[0_24px_64px_rgba(28,26,23,0.12)]">
+                      <p className="text-sm text-stone-600">No quick matches found yet. Keep typing or press search to view the full results page.</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="pointer-events-auto border border-stone-200 bg-[#fcfaf5] px-4 py-5 shadow-[0_24px_64px_rgba(28,26,23,0.12)]">
+                    <p className="text-sm text-stone-600">Start typing a product name, collection, article topic, or page title.</p>
+                  </div>
+                )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
+      {/* Header */}
+      <header
+        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center transition-all duration-300 ${isScrolled ? 'shadow-md border-b border-stone-200' : 'shadow-sm border-b border-stone-100'}`}
+        style={{
+          transform: desktopHeaderOffset === 0 ? undefined : `translateY(${desktopHeaderOffset}px)`,
+          transition: 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)',
+          willChange: isDesktopDropdownOpen ? 'transform' : undefined,
+        }}
+      >
         {/* Top Row: Logo, Search, Icons */}
         <div className={`w-full max-w-[1440px] mx-auto px-4 sm:px-8 flex lg:grid lg:grid-cols-[220px_minmax(320px,560px)_220px] items-center justify-between gap-4 lg:gap-8 transition-all duration-300 ${isScrolled ? 'py-2 md:py-2.5' : 'py-3.5 md:py-4'}`}>
           {/* Mobile Hamburger (Visible on Tablet/Mobile) */}
@@ -1359,7 +1380,7 @@ export default function App() {
             </form>
 
             <AnimatePresence>
-              {isDesktopSearchActive && siteSearchQuery.trim().length > 1 ? (
+              {isDesktopSearchActive && siteSearchQuery.trim().length > 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -1387,12 +1408,20 @@ export default function App() {
                                 index === activeSearchIndex ? 'bg-[#f7f2ea]' : 'hover:bg-stone-50'
                               }`}
                             >
-                              <div className="relative h-20 overflow-hidden bg-stone-100">
+                              <div className="relative flex h-20 items-center justify-center overflow-hidden bg-stone-100">
                                 {result.image ? (
                                   <img
                                     src={result.image}
                                     alt={result.title}
-                                    className="absolute inset-0 h-full w-full object-cover"
+                                    className={`absolute inset-0 h-full w-full ${
+                                      result.kind === 'product'
+                                        ? result.imageFit === 'contain'
+                                          ? 'object-contain p-3'
+                                          : 'object-cover object-center'
+                                        : result.imageFit === 'contain'
+                                          ? 'object-contain p-2'
+                                          : 'object-cover'
+                                    }`}
                                     referrerPolicy="no-referrer"
                                   />
                                 ) : (
@@ -1518,15 +1547,9 @@ export default function App() {
         </div>
 
         {/* Main Nav */}
-        <motion.div
-          initial={false}
-          animate={{
-            height: isScrollingDown && !isDesktopDropdownOpen ? 0 : 'auto',
-            opacity: isScrollingDown && !isDesktopDropdownOpen ? 0 : 1,
-          }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="w-full flex justify-center"
-          style={{ overflow: isScrollingDown && !isDesktopDropdownOpen ? 'hidden' : 'visible' }}
+        <div
+          className={`w-full justify-center ${isScrollingDown && !isDesktopDropdownOpen ? 'hidden' : 'flex'}`}
+          aria-hidden={isScrollingDown && !isDesktopDropdownOpen}
         >
           <nav className={`relative hidden w-full max-w-[1240px] mx-auto px-4 xl:px-0 lg:flex items-center justify-center gap-6 xl:gap-8 font-semibold text-[0.92rem] xl:text-[1rem] tracking-[0.15em] uppercase transition-all duration-300 ${isScrolled ? 'py-1 text-stone-700' : 'py-2 text-stone-800'}`}>
             {navigation.map((item) => (
@@ -1604,7 +1627,7 @@ export default function App() {
               </div>
             ))}
           </nav>
-        </motion.div>
+        </div>
       </header>
 
       <main>

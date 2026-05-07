@@ -2,6 +2,7 @@ import { BLOG_POSTS } from './blogData';
 import {
   COLLECTION_DEFINITIONS,
   COLLECTION_PRODUCTS,
+  CollectionImageFit,
   collectionPath,
   productListingPath,
 } from './collectionData';
@@ -15,6 +16,7 @@ export type SearchResultItem = {
   description: string;
   path: string;
   image?: string;
+  imageFit?: CollectionImageFit;
   priceLabel?: string;
   metaLabel: string;
   isExternal?: boolean;
@@ -104,6 +106,7 @@ const SEARCH_INDEX: SearchResultItem[] = [
     description: `${product.collectionSlugs.join(' ')} ${product.inStock ? 'In stock' : 'Sold out'}`,
     path: product.path,
     image: product.image,
+    imageFit: product.imageFit,
     priceLabel: product.priceLabel,
     metaLabel: 'Product',
     keywords: product.collectionSlugs,
@@ -115,6 +118,7 @@ const SEARCH_INDEX: SearchResultItem[] = [
     description: collection.description,
     path: collectionPath(collection.slug),
     image: collection.heroImage,
+    imageFit: collection.heroImageFit,
     metaLabel: collection.family,
     keywords: [collection.family, collection.eyebrow, ...collection.relatedSlugs],
   })),
