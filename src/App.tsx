@@ -42,6 +42,8 @@ import ContactPage from './ContactPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
 import BlogArticlePage from './BlogArticlePage';
+import AuthPage from './AuthPage';
+import PrivacyPolicyPage from './PrivacyPolicyPage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -310,6 +312,16 @@ export default function App() {
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
   const isAboutPage = currentPath === '/about' || currentPath === '/about/';
+  const isAuthPage =
+    currentPath === '/my-account' ||
+    currentPath === '/my-account/' ||
+    currentPath === '/my-account/register' ||
+    currentPath === '/my-account/register/' ||
+    currentPath === '/sign-in' ||
+    currentPath === '/sign-in/' ||
+    currentPath === '/register' ||
+    currentPath === '/register/';
+  const authMode = currentPath.includes('register') ? 'register' : 'login';
   const blogArticleSlug = currentPath.startsWith('/blog/')
     ? currentPath.replace('/blog/', '').replace(/\/$/, '')
     : '';
@@ -317,6 +329,7 @@ export default function App() {
   const isBlogArticlePage = Boolean(activeBlogPost?.article);
   const isBlogPage = currentPath === '/blog' || currentPath === '/blog/';
   const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
+  const isPrivacyPage = currentPath === '/privacy-policy' || currentPath === '/privacy-policy/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/')[0]
     : '';
@@ -329,9 +342,11 @@ export default function App() {
       !isProductPage &&
       !isCollectionPage &&
       !isAboutPage &&
+      !isAuthPage &&
       !isBlogArticlePage &&
       !isBlogPage &&
       !isContactPage &&
+      !isPrivacyPage &&
       !isShopPage &&
       !isWishlistPage &&
       !isCartPage);
@@ -999,7 +1014,13 @@ export default function App() {
                   <User size={20} className="text-stone-400" />
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-stone-900">My Account</p>
-                    <button className="text-stone-500 text-xs hover:text-stone-900 underline underline-offset-2">Sign In / Register</button>
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('/my-account')}
+                      className="text-stone-500 text-xs hover:text-stone-900 underline underline-offset-2"
+                    >
+                      Sign In / Register
+                    </button>
                   </div>
                 </div>
                 
@@ -1109,10 +1130,22 @@ export default function App() {
                   </div>
                   <ul className="text-[13px] font-bold uppercase tracking-[0.14em] text-stone-700">
                     <li>
-                      <a href="#" className="block px-6 py-3 hover:bg-stone-50 hover:text-stone-900 transition-colors">Sign In</a>
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/my-account')}
+                        className="block w-full px-6 py-3 text-left hover:bg-stone-50 hover:text-stone-900 transition-colors"
+                      >
+                        Sign In
+                      </button>
                     </li>
                     <li>
-                      <a href="#" className="block px-6 py-3 hover:bg-stone-50 hover:text-stone-900 transition-colors">Register</a>
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('/my-account/register')}
+                        className="block w-full px-6 py-3 text-left hover:bg-stone-50 hover:text-stone-900 transition-colors"
+                      >
+                        Register
+                      </button>
                     </li>
                   </ul>
                 </div>
@@ -1257,12 +1290,16 @@ export default function App() {
           />
         ) : isAboutPage ? (
           <AboutPage navigateTo={navigateTo} />
+        ) : isAuthPage ? (
+          <AuthPage navigateTo={navigateTo} mode={authMode} />
         ) : isBlogArticlePage ? (
           <BlogArticlePage navigateTo={navigateTo} post={activeBlogPost!} />
         ) : isBlogPage ? (
           <BlogPage navigateTo={navigateTo} />
         ) : isContactPage ? (
           <ContactPage navigateTo={navigateTo} />
+        ) : isPrivacyPage ? (
+          <PrivacyPolicyPage navigateTo={navigateTo} />
         ) : isWishlistPage ? (
           <>
             <section className="relative overflow-hidden border-b border-stone-200 bg-[#f4ecdf]">
@@ -2639,6 +2676,7 @@ export default function App() {
                 <li><button type="button" onClick={() => navigateTo(productListingPath())} className="hover:text-white transition-colors">Shop</button></li>
                 <li><button type="button" onClick={() => navigateTo('/blog')} className="hover:text-white transition-colors">Blog</button></li>
                 <li><button type="button" onClick={() => navigateTo('/contact')} className="hover:text-white transition-colors">Contact</button></li>
+                <li><button type="button" onClick={() => navigateTo('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button></li>
               </ul>
             </div>
 
@@ -2710,6 +2748,14 @@ export default function App() {
 
           <div className="border-t border-stone-800 pt-8 flex flex-col items-center justify-center text-stone-500 text-xs space-y-2">
             <p>© 2024 Wansati Brands. All rights reserved.</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] uppercase tracking-[0.14em]">
+              <button type="button" onClick={() => navigateTo('/privacy-policy')} className="transition-colors hover:text-white">
+                Privacy Policy
+              </button>
+              <a href={returnPolicyUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
+                Return Policy
+              </a>
+            </div>
             <p className="flex items-center gap-1.5">
               designed by 
               <a href="https://www.slotly.co.za/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center group">

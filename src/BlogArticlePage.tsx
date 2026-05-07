@@ -311,6 +311,18 @@ export default function BlogArticlePage({ navigateTo, post }: BlogArticlePagePro
                         </label>
                       </div>
 
+                      <p className="text-sm leading-relaxed text-stone-600">
+                        By posting a comment, you agree to our{' '}
+                        <button
+                          type="button"
+                          onClick={() => navigateTo('/privacy-policy')}
+                          className="font-semibold text-stone-900 underline underline-offset-4 transition-colors hover:text-[#8b765e]"
+                        >
+                          privacy policy
+                        </button>
+                        .
+                      </p>
+
                       <button
                         type="submit"
                         className="inline-flex bg-[#1c1a17] px-8 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-stone-800"
