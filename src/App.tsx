@@ -41,6 +41,7 @@ import ProductListingPage from './ProductListingPage';
 import ContactPage from './ContactPage';
 import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
+import BlogArticlePage from './BlogArticlePage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -49,6 +50,7 @@ import {
   getProductListingPathByLabel,
   productListingPath,
 } from './collectionData';
+import { getBlogPostBySlug } from './blogData';
 
 type WishlistItem = {
   id: string;
@@ -308,6 +310,11 @@ export default function App() {
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
   const isAboutPage = currentPath === '/about' || currentPath === '/about/';
+  const blogArticleSlug = currentPath.startsWith('/blog/')
+    ? currentPath.replace('/blog/', '').replace(/\/$/, '')
+    : '';
+  const activeBlogPost = blogArticleSlug ? getBlogPostBySlug(blogArticleSlug) : undefined;
+  const isBlogArticlePage = Boolean(activeBlogPost?.article);
   const isBlogPage = currentPath === '/blog' || currentPath === '/blog/';
   const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
@@ -322,6 +329,7 @@ export default function App() {
       !isProductPage &&
       !isCollectionPage &&
       !isAboutPage &&
+      !isBlogArticlePage &&
       !isBlogPage &&
       !isContactPage &&
       !isShopPage &&
@@ -1249,6 +1257,8 @@ export default function App() {
           />
         ) : isAboutPage ? (
           <AboutPage navigateTo={navigateTo} />
+        ) : isBlogArticlePage ? (
+          <BlogArticlePage navigateTo={navigateTo} post={activeBlogPost!} />
         ) : isBlogPage ? (
           <BlogPage navigateTo={navigateTo} />
         ) : isContactPage ? (
