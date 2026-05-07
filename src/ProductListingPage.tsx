@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, ChevronDown, Filter, Heart, Search, SlidersHorizontal, X } from 'lucide-react';
 import {
@@ -369,6 +369,7 @@ export default function ProductListingPage({
   navigateTo,
   onAddToWishlist,
 }: ProductListingPageProps) {
+  const desktopFilterAutoCloseTimeoutRef = useRef<number | null>(null);
   const pathSegments = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/').filter(Boolean)
     : [];
@@ -502,6 +503,18 @@ export default function ProductListingPage({
     );
   };
 
+  const clearDesktopFilterAutoCloseTimeout = () => {
+    if (desktopFilterAutoCloseTimeoutRef.current !== null) {
+      window.clearTimeout(desktopFilterAutoCloseTimeoutRef.current);
+      desktopFilterAutoCloseTimeoutRef.current = null;
+    }
+  };
+
+  const handleDesktopFilterToggle = () => {
+    clearDesktopFilterAutoCloseTimeout();
+    setIsDesktopFilterOpen((current) => !current);
+  };
+
   useEffect(() => {
     setSearchQuery('');
     setSelectedCategorySlugs(routeCategorySlugs);
@@ -509,7 +522,23 @@ export default function ProductListingPage({
     setPriceFilter('all');
     setSortBy('featured');
     setIsMobileFiltersOpen(false);
+    setIsDesktopFilterOpen(true);
   }, [activeCollection?.slug, routeCategorySlugs.join('|')]);
+
+  useEffect(() => {
+    clearDesktopFilterAutoCloseTimeout();
+
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      desktopFilterAutoCloseTimeoutRef.current = window.setTimeout(() => {
+        setIsDesktopFilterOpen(false);
+        desktopFilterAutoCloseTimeoutRef.current = null;
+      }, 2600);
+    }
+
+    return () => {
+      clearDesktopFilterAutoCloseTimeout();
+    };
+  }, [currentPath]);
 
   const activeShopCollectionSlug = getActiveShopCollectionSlug(activeCollection);
   const eyebrow = activeCollection ? activeCollection.eyebrow : 'Shop Wansati';
@@ -637,10 +666,10 @@ export default function ProductListingPage({
           }`}
         >
           <aside className="hidden lg:block">
-            <div className="sticky top-28 h-[calc(100vh-8rem)] overflow-hidden border-r border-stone-300 bg-[#fcfaf5]">
+            <div className="sticky top-28 flex h-[calc(100vh-8rem)] flex-col overflow-hidden border-r border-stone-300 bg-[#fcfaf5]">
               <button
                 type="button"
-                onClick={() => setIsDesktopFilterOpen((current) => !current)}
+                onClick={handleDesktopFilterToggle}
                 className={`flex w-full border-b border-stone-300 text-left transition-all duration-300 ${
                   isDesktopFilterOpen
                     ? 'items-center justify-between gap-4 px-5 py-6'
@@ -663,25 +692,34 @@ export default function ProductListingPage({
                 />
               </button>
 
-              {isDesktopFilterOpen ? (
-                <div className="plp-filter-sidebar min-h-0 flex-1 overflow-y-auto px-5 py-6">
-                  <FilterPanel
-                    showSearch={false}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    categoryFilterLabel={categoryFilterLabel}
-                    categoryOptions={categoryOptions}
-                    selectedCategorySlugs={selectedCategorySlugs}
-                    toggleCategorySlug={toggleCategorySlug}
-                    availabilityFilter={availabilityFilter}
-                    setAvailabilityFilter={setAvailabilityFilter}
-                    priceFilter={priceFilter}
-                    setPriceFilter={setPriceFilter}
-                    clearFilters={clearFilters}
-                    hasActiveFilters={hasActiveFilters}
-                  />
-                </div>
-              ) : null}
+              <AnimatePresence initial={false}>
+                {isDesktopFilterOpen ? (
+                  <motion.div
+                    key="desktop-filter-panel"
+                    initial={{ opacity: 0, x: -16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -16 }}
+                    transition={{ duration: 0.24, ease: 'easeInOut' }}
+                    className="plp-filter-sidebar min-h-0 flex-1 overflow-y-auto px-5 py-6"
+                  >
+                    <FilterPanel
+                      showSearch={false}
+                      searchQuery={searchQuery}
+                      setSearchQuery={setSearchQuery}
+                      categoryFilterLabel={categoryFilterLabel}
+                      categoryOptions={categoryOptions}
+                      selectedCategorySlugs={selectedCategorySlugs}
+                      toggleCategorySlug={toggleCategorySlug}
+                      availabilityFilter={availabilityFilter}
+                      setAvailabilityFilter={setAvailabilityFilter}
+                      priceFilter={priceFilter}
+                      setPriceFilter={setPriceFilter}
+                      clearFilters={clearFilters}
+                      hasActiveFilters={hasActiveFilters}
+                    />
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
             </div>
           </aside>
 
