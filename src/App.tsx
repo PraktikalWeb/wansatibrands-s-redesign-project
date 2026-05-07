@@ -47,6 +47,8 @@ import LostPasswordPage from './LostPasswordPage';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
 import CheckoutPage from './CheckoutPage';
 import TermsAndConditionsPage from './TermsAndConditionsPage';
+import ReturnsPolicyPage from './ReturnsPolicyPage';
+import SearchResultsPage from './SearchResultsPage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -56,6 +58,7 @@ import {
   productListingPath,
 } from './collectionData';
 import { getBlogPostBySlug } from './blogData';
+import { getSearchSuggestions, SearchResultItem } from './searchData';
 
 type WishlistItem = {
   id: string;
@@ -85,9 +88,13 @@ export default function App() {
     "https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6391-scaled.jpg"
   ];
   const [currentPath, setCurrentPath] = useState(() => window.location.pathname || '/');
+  const [currentSearch, setCurrentSearch] = useState(() => window.location.search || '');
   const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDesktopSearchActive, setIsDesktopSearchActive] = useState(false);
+  const [siteSearchQuery, setSiteSearchQuery] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '');
+  const [activeSearchIndex, setActiveSearchIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(() => (window.location.pathname || '/') !== '/');
@@ -139,6 +146,7 @@ export default function App() {
     isDown: (window.location.pathname || '/') !== '/',
     lastToggleTime: 0,
   });
+  const desktopSearchRef = useRef<HTMLDivElement | null>(null);
 
   const syncNavVisibilityForPath = (path: string) => {
     const shouldHideDesktopNav = path !== '/';
@@ -150,10 +158,14 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       const nextPath = window.location.pathname || '/';
+      const nextSearch = window.location.search || '';
       setCurrentPath(nextPath);
+      setCurrentSearch(nextSearch);
       setActiveSidePanel(null);
       setIsMenuOpen(false);
       setIsSearchOpen(false);
+      setIsDesktopSearchActive(false);
+      setActiveSearchIndex(-1);
       setActiveDesktopDropdown(null);
       setDesktopDropdownScrollOrigin(null);
       syncNavVisibilityForPath(nextPath);
@@ -327,6 +339,7 @@ export default function App() {
     currentPath === '/register/';
   const isLostPasswordPage = currentPath === '/my-account/lost-password' || currentPath === '/my-account/lost-password/';
   const isResetPasswordPage = currentPath === '/my-account/reset-password' || currentPath === '/my-account/reset-password/';
+  const isSearchResultsPage = currentPath === '/search' || currentPath === '/search/';
   const authMode = currentPath.includes('register') ? 'register' : 'login';
   const blogArticleSlug = currentPath.startsWith('/blog/')
     ? currentPath.replace('/blog/', '').replace(/\/$/, '')
@@ -337,6 +350,7 @@ export default function App() {
   const isContactPage = currentPath === '/contact' || currentPath === '/contact/';
   const isPrivacyPage = currentPath === '/privacy-policy' || currentPath === '/privacy-policy/';
   const isTermsPage = currentPath === '/terms-and-conditions' || currentPath === '/terms-and-conditions/';
+  const isReturnsPage = currentPath === '/returns-policy' || currentPath === '/returns-policy/';
   const shopSlugFromPath = currentPath.startsWith('/shop/')
     ? currentPath.replace('/shop/', '').split('/')[0]
     : '';
@@ -355,6 +369,8 @@ export default function App() {
       !isContactPage &&
       !isPrivacyPage &&
       !isTermsPage &&
+      !isReturnsPage &&
+      !isSearchResultsPage &&
       !isLostPasswordPage &&
       !isResetPasswordPage &&
       !isShopPage &&
@@ -367,7 +383,11 @@ export default function App() {
   const cartDeliveryFee = cartItems.length === 0 ? 0 : (cartSubtotal >= 1000 ? 0 : 99);
   const cartTotal = cartSubtotal + cartDeliveryFee;
   const wishlistEstimatedValue = wishlistItems.reduce((total, item) => total + item.numericPrice, 0);
-  const returnPolicyUrl = 'https://www.wansatibrands.co.za/refund_returns/';
+  const returnPolicyUrl = '/returns-policy';
+  const currentSearchQuery = new URLSearchParams(currentSearch).get('q') ?? '';
+  const searchSuggestions = siteSearchQuery.trim().length > 1
+    ? getSearchSuggestions(siteSearchQuery, isSearchOpen ? 6 : 8)
+    : [];
   const yocoAcceptedCards = [
     { name: 'Visa', logo: yocoVisaLogo, className: 'h-4 sm:h-5' },
     { name: 'Mastercard', logo: yocoMastercardLogo, className: 'h-4 sm:h-5' },
@@ -476,19 +496,130 @@ export default function App() {
   };
 
   const navigateTo = (path: string) => {
-    const nextPath = path || '/';
+    const resolvedPath = path || '/';
+    const url = new URL(resolvedPath, window.location.origin);
+    const nextPath = url.pathname || '/';
+    const nextSearch = url.search || '';
 
-    if (window.location.pathname !== nextPath) {
-      window.history.pushState({}, '', nextPath);
+    if (window.location.pathname !== nextPath || window.location.search !== nextSearch) {
+      window.history.pushState({}, '', `${nextPath}${nextSearch}`);
       setCurrentPath(nextPath);
+      setCurrentSearch(nextSearch);
     }
 
     setActiveSidePanel(null);
     setIsMenuOpen(false);
     setIsSearchOpen(false);
+    setIsDesktopSearchActive(false);
+    setActiveSearchIndex(-1);
     closeDesktopDropdown();
     syncNavVisibilityForPath(nextPath);
     window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    if (isSearchResultsPage) {
+      setSiteSearchQuery(currentSearchQuery);
+      setActiveSearchIndex(-1);
+    }
+  }, [currentSearchQuery, isSearchResultsPage]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!desktopSearchRef.current?.contains(event.target as Node)) {
+        setIsDesktopSearchActive(false);
+        setActiveSearchIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    return () => document.removeEventListener('mousedown', handlePointerDown);
+  }, []);
+
+  useEffect(() => {
+    setActiveSearchIndex(-1);
+  }, [siteSearchQuery]);
+
+  const handleSearchSubmit = (query: string) => {
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return;
+
+    setSiteSearchQuery(trimmedQuery);
+    navigateTo(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+  };
+
+  const handleSearchResultSelect = (result: SearchResultItem) => {
+    setIsSearchOpen(false);
+    setIsDesktopSearchActive(false);
+    setActiveSearchIndex(-1);
+
+    if (result.isExternal) {
+      window.location.assign(result.path);
+      return;
+    }
+
+    navigateTo(result.path);
+  };
+
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!searchSuggestions.length) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSearchSubmit(siteSearchQuery);
+      }
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setActiveSearchIndex((previous) => (previous + 1) % searchSuggestions.length);
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActiveSearchIndex((previous) => (previous <= 0 ? searchSuggestions.length - 1 : previous - 1));
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      setIsDesktopSearchActive(false);
+      setIsSearchOpen(false);
+      setActiveSearchIndex(-1);
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      if (activeSearchIndex >= 0) {
+        handleSearchResultSelect(searchSuggestions[activeSearchIndex]);
+        return;
+      }
+
+      handleSearchSubmit(siteSearchQuery);
+    }
+  };
+
+  const renderSearchHighlight = (text: string, query: string) => {
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return text;
+
+    const escapedQuery = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const match = text.match(new RegExp(escapedQuery, 'i'));
+
+    if (!match || match.index === undefined) return text;
+
+    const start = match.index;
+    const end = start + match[0].length;
+
+    return (
+      <>
+        {text.slice(0, start)}
+        <span className="font-semibold text-stone-900">{text.slice(start, end)}</span>
+        {text.slice(end)}
+      </>
+    );
   };
 
   const toggleMobileCategory = (title: string) => {
@@ -1064,22 +1195,85 @@ export default function App() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute inset-0 bg-white z-[70] flex items-center px-4"
+              className="absolute inset-0 z-[70] overflow-y-auto bg-white px-4 pt-4 pb-6"
             >
-              <div className="flex-1 flex items-center relative py-2">
-                <Search size={18} className="absolute left-3 text-stone-900" />
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder="What are you looking for?"
-                  className="w-full pl-10 pr-12 py-3 bg-white border border-stone-900 text-sm focus:outline-none placeholder:text-stone-400"
-                />
-                <button 
-                  onClick={() => setIsSearchOpen(false)}
-                  className="absolute right-3 text-stone-900 hover:text-black"
+              <div className="mx-auto w-full max-w-2xl">
+                <form
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    handleSearchSubmit(siteSearchQuery);
+                  }}
+                  className="relative py-2"
                 >
-                  <X size={20} />
-                </button>
+                  <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-900" />
+                  <input
+                    autoFocus
+                    type="text"
+                    value={siteSearchQuery}
+                    onChange={(event) => setSiteSearchQuery(event.target.value)}
+                    onKeyDown={handleSearchKeyDown}
+                    placeholder="What are you looking for?"
+                    className="w-full border border-stone-900 bg-white py-3 pl-10 pr-12 text-sm focus:outline-none placeholder:text-stone-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchOpen(false)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-900 hover:text-black"
+                  >
+                    <X size={20} />
+                  </button>
+                </form>
+
+                {siteSearchQuery.trim().length > 1 ? (
+                  searchSuggestions.length > 0 ? (
+                    <div className="mt-4 border border-stone-200 bg-white">
+                      <div className="border-b border-stone-100 px-4 py-3">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
+                      </div>
+                      <ul className="divide-y divide-stone-100">
+                        {searchSuggestions.map((result, index) => (
+                          <li key={result.id}>
+                            <button
+                              type="button"
+                              onClick={() => handleSearchResultSelect(result)}
+                              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
+                                index === activeSearchIndex ? 'bg-[#f7f2ea]' : 'hover:bg-stone-50'
+                              }`}
+                            >
+                              <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
+                                {result.metaLabel}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm text-stone-700">{renderSearchHighlight(result.title, siteSearchQuery)}</p>
+                                {result.priceLabel ? (
+                                  <p className="mt-1 text-xs font-semibold text-stone-500">{result.priceLabel}</p>
+                                ) : null}
+                              </div>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="border-t border-stone-200 px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => handleSearchSubmit(siteSearchQuery)}
+                          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-700 transition-colors hover:text-stone-900"
+                        >
+                          View all results
+                          <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 border border-stone-200 bg-[#fcfaf5] px-4 py-5">
+                      <p className="text-sm text-stone-600">No quick matches found. Press enter to view full search results.</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="mt-4 border border-stone-200 bg-[#fcfaf5] px-4 py-5">
+                    <p className="text-sm text-stone-600">Try a product name, collection, article topic, or page title.</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -1110,15 +1304,84 @@ export default function App() {
           </button>
 
           {/* Search (Desktop) */}
-          <div className="hidden lg:flex w-full max-w-xl mx-auto relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="premium-input h-11 w-full pl-4 pr-14 border border-stone-300 text-sm focus:outline-none focus:border-stone-400 placeholder:text-stone-400"
-            />
-            <button className="absolute right-0 top-0 bottom-0 w-14 bg-stone-900 text-white flex items-center justify-center hover:bg-black transition-colors">
-              <Search size={16} />
-            </button>
+          <div ref={desktopSearchRef} className="relative hidden w-full max-w-xl mx-auto lg:block">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                handleSearchSubmit(siteSearchQuery);
+              }}
+              className="relative"
+            >
+              <input
+                type="text"
+                value={siteSearchQuery}
+                onChange={(event) => setSiteSearchQuery(event.target.value)}
+                onFocus={() => setIsDesktopSearchActive(true)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Search products, collections, articles..."
+                className="premium-input h-11 w-full border border-stone-300 pl-4 pr-14 text-sm placeholder:text-stone-400 focus:border-stone-400 focus:outline-none"
+              />
+              <button type="submit" className="absolute right-0 top-0 bottom-0 flex w-14 items-center justify-center bg-stone-900 text-white transition-colors hover:bg-black">
+                <Search size={16} />
+              </button>
+            </form>
+
+            <AnimatePresence>
+              {isDesktopSearchActive && siteSearchQuery.trim().length > 1 ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute left-0 right-0 top-full mt-3 border border-stone-200 bg-white shadow-xl"
+                >
+                  {searchSuggestions.length > 0 ? (
+                    <>
+                      <div className="border-b border-stone-100 px-4 py-3">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
+                      </div>
+                      <ul className="divide-y divide-stone-100">
+                        {searchSuggestions.map((result, index) => (
+                          <li key={result.id}>
+                            <button
+                              type="button"
+                              onClick={() => handleSearchResultSelect(result)}
+                              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
+                                index === activeSearchIndex ? 'bg-[#f7f2ea]' : 'hover:bg-stone-50'
+                              }`}
+                            >
+                              <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
+                                {result.metaLabel}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm text-stone-700">{renderSearchHighlight(result.title, siteSearchQuery)}</p>
+                                <p className="mt-1 line-clamp-1 text-xs text-stone-500">{result.description}</p>
+                              </div>
+                              {result.priceLabel ? (
+                                <span className="text-xs font-semibold text-stone-500">{result.priceLabel}</span>
+                              ) : null}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="border-t border-stone-200 px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => handleSearchSubmit(siteSearchQuery)}
+                          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-700 transition-colors hover:text-stone-900"
+                        >
+                          View all results
+                          <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="px-4 py-5">
+                      <p className="text-sm text-stone-600">No quick matches found. Press enter to view full search results.</p>
+                    </div>
+                  )}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
 
           {/* Icons */}
@@ -1320,6 +1583,15 @@ export default function App() {
           <PrivacyPolicyPage navigateTo={navigateTo} />
         ) : isTermsPage ? (
           <TermsAndConditionsPage navigateTo={navigateTo} />
+        ) : isReturnsPage ? (
+          <ReturnsPolicyPage navigateTo={navigateTo} />
+        ) : isSearchResultsPage ? (
+          <SearchResultsPage
+            query={currentSearchQuery}
+            navigateTo={navigateTo}
+            onSearchSubmit={handleSearchSubmit}
+            onSelectResult={handleSearchResultSelect}
+          />
         ) : isCheckoutPage ? (
           <CheckoutPage
             navigateTo={navigateTo}
@@ -1732,15 +2004,14 @@ export default function App() {
                         </button>
 
                         <div className="border-t border-stone-200 pt-5 space-y-4">
-                          <a
-                            href={returnPolicyUrl}
-                            target="_blank"
-                            rel="noreferrer"
+                          <button
+                            type="button"
+                            onClick={() => navigateTo(returnPolicyUrl)}
                             className="flex w-full items-center justify-between gap-3 text-[11px] uppercase tracking-[0.24em] text-stone-500 transition-colors hover:text-stone-900"
                           >
                             return policy
                             <ArrowRight size={12} strokeWidth={1.6} />
-                          </a>
+                          </button>
 
                           <div className="h-px bg-stone-200" />
 
@@ -2733,6 +3004,7 @@ export default function App() {
                 <li><button type="button" onClick={() => navigateTo('/contact')} className="hover:text-white transition-colors">Contact</button></li>
                 <li><button type="button" onClick={() => navigateTo('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button></li>
                 <li><button type="button" onClick={() => navigateTo('/terms-and-conditions')} className="hover:text-white transition-colors">Terms & Conditions</button></li>
+                <li><button type="button" onClick={() => navigateTo('/returns-policy')} className="hover:text-white transition-colors">Returns Policy</button></li>
               </ul>
             </div>
 
@@ -2811,9 +3083,9 @@ export default function App() {
               <button type="button" onClick={() => navigateTo('/terms-and-conditions')} className="transition-colors hover:text-white">
                 Terms & Conditions
               </button>
-              <a href={returnPolicyUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
+              <button type="button" onClick={() => navigateTo('/returns-policy')} className="transition-colors hover:text-white">
                 Return Policy
-              </a>
+              </button>
             </div>
             <p className="flex items-center gap-1.5">
               designed by 

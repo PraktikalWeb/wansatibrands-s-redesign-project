@@ -907,8 +907,10 @@ export default function CheckoutPage({
 
                       <a
                         href={returnPolicyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          navigateTo(returnPolicyUrl);
+                        }}
                         className="flex items-center justify-between gap-3 border-t border-stone-200 pt-4 text-[11px] uppercase tracking-[0.22em] text-stone-500 transition-colors hover:text-stone-900"
                       >
                         return policy
