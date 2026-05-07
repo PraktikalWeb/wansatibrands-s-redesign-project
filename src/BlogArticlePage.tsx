@@ -152,40 +152,29 @@ export default function BlogArticlePage({ navigateTo, post }: BlogArticlePagePro
               );
             })}
 
-            <div className="mt-14 border-t border-stone-200 pt-8">
-              <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="mt-4 flex justify-end">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">Share</span>
                 <button
                   type="button"
-                  onClick={() => navigateTo('/blog')}
-                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-900 transition-colors hover:text-[#8b765e]"
+                  onClick={shareToFacebook}
+                  aria-label="Share on Facebook"
+                  className="inline-flex h-10 w-10 items-center justify-center border border-stone-300 text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-900"
                 >
-                  <ArrowRight className="h-4 w-4 rotate-180" strokeWidth={1.7} />
-                  Back To Blog
+                  <Facebook className="h-4 w-4" strokeWidth={1.8} />
                 </button>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">Share</span>
-                  <button
-                    type="button"
-                    onClick={shareToFacebook}
-                    aria-label="Share on Facebook"
-                    className="inline-flex h-10 w-10 items-center justify-center border border-stone-300 text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-900"
-                  >
-                    <Facebook className="h-4 w-4" strokeWidth={1.8} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={shareToX}
-                    aria-label="Share on X"
-                    className="inline-flex h-10 w-10 items-center justify-center border border-stone-300 text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-900"
-                  >
-                    <span className="text-sm font-semibold">X</span>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={shareToX}
+                  aria-label="Share on X"
+                  className="inline-flex h-10 w-10 items-center justify-center border border-stone-300 text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-900"
+                >
+                  <span className="text-sm font-semibold">X</span>
+                </button>
               </div>
             </div>
 
-            <div className="mt-14 border-t border-stone-200 pt-8">
+            <div className="mt-8 border-t border-stone-200 pt-8">
               {commentExamples.length > 0 ? (
                 <div className="mb-14">
                   <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#8b765e]">Conversation</p>
@@ -331,6 +320,17 @@ export default function BlogArticlePage({ navigateTo, post }: BlogArticlePagePro
                     </div>
                   ) : null}
                 </form>
+
+                <div className="mt-8 flex border-t border-stone-200 pt-6">
+                  <button
+                    type="button"
+                    onClick={() => navigateTo('/blog')}
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-900 transition-colors hover:text-[#8b765e]"
+                  >
+                    <ArrowRight className="h-4 w-4 rotate-180" strokeWidth={1.7} />
+                    Back To Blog
+                  </button>
+                </div>
               </div>
             </div>
           </motion.article>
@@ -365,6 +365,19 @@ export default function BlogArticlePage({ navigateTo, post }: BlogArticlePagePro
               Subscribe
             </button>
           </form>
+        </div>
+      </section>
+
+      <section className="border-t border-stone-200 bg-white py-8">
+        <div className="mx-auto flex max-w-[860px] px-4 sm:px-8">
+          <button
+            type="button"
+            onClick={() => navigateTo('/blog')}
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-900 transition-colors hover:text-[#8b765e]"
+          >
+            <ArrowRight className="h-4 w-4 rotate-180" strokeWidth={1.7} />
+            Back To Blog
+          </button>
         </div>
       </section>
     </>
