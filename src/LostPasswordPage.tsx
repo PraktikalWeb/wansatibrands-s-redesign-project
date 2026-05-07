@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Mail, ShieldCheck, User } from 'lucide-react';
+import { ArrowRight, Lock, Mail, ShieldCheck, User } from 'lucide-react';
 import FormFeedback, { FormFeedbackTone } from './FormFeedback';
 
 type LostPasswordPageProps = {
+  mode?: 'request' | 'reset';
   navigateTo: (path: string) => void;
 };
 
@@ -15,12 +16,47 @@ type FormNotice = {
 const heroImage =
   'https://www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6563-scaled.jpg';
 
-export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) {
+export default function LostPasswordPage({ mode = 'request', navigateTo }: LostPasswordPageProps) {
   const [identifier, setIdentifier] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [notice, setNotice] = useState<FormNotice>(null);
+  const isResetMode = mode === 'reset';
 
   const handleResetSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isResetMode) {
+      if (!newPassword.trim() || !confirmPassword.trim()) {
+        setNotice({
+          tone: 'error',
+          message: 'Please enter your new password in both fields before continuing.',
+        });
+        return;
+      }
+
+      if (newPassword.trim().length < 8) {
+        setNotice({
+          tone: 'error',
+          message: 'Your new password should be at least 8 characters long.',
+        });
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setNotice({
+          tone: 'error',
+          message: 'The two password fields do not match. Please check them and try again.',
+        });
+        return;
+      }
+
+      setNotice({
+        tone: 'success',
+        message: 'Your password has been reset successfully. You can now sign in with your new password.',
+      });
+      return;
+    }
 
     const trimmedIdentifier = identifier.trim();
 
@@ -64,14 +100,18 @@ export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) 
                 My Account
               </button>
               <ArrowRight size={14} strokeWidth={1.5} />
-              <span className="text-stone-900">Lost Password</span>
+              <span className="text-stone-900">{isResetMode ? 'Set New Password' : 'Lost Password'}</span>
             </div>
 
             <div className="max-w-3xl">
               <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#8b765e]">Account Recovery</p>
-              <h1 className="font-serif text-3xl text-stone-900 md:text-5xl">Reset your password.</h1>
+              <h1 className="font-serif text-3xl text-stone-900 md:text-5xl">
+                {isResetMode ? 'Set your new password.' : 'Reset your password.'}
+              </h1>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-stone-600 md:text-base">
-                Enter the email or username tied to your account and we&apos;ll send you a link to create a new password.
+                {isResetMode
+                  ? 'Choose a new password for your account and confirm it below to finish the recovery process.'
+                  : 'Enter the email or username tied to your account and we&apos;ll send you a link to create a new password.'}
               </p>
             </div>
           </motion.div>
@@ -92,39 +132,82 @@ export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) 
 
             <form className="space-y-6" noValidate onSubmit={handleResetSubmit}>
               <div>
-                <h2 className="font-serif text-3xl text-stone-900">Lost your password?</h2>
+                <h2 className="font-serif text-3xl text-stone-900">
+                  {isResetMode ? 'Create a new password' : 'Lost your password?'}
+                </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-stone-600">
-                  Please enter your username or email address. You will receive a link to create a new password via
-                  email.
+                  {isResetMode
+                    ? 'Enter your new password below. Once saved, you can return to your account and sign in normally.'
+                    : 'Please enter your username or email address. You will receive a link to create a new password via email.'}
                 </p>
               </div>
 
               {notice ? <FormFeedback tone={notice.tone} message={notice.message} /> : null}
 
-              <label className="block">
-                <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
-                  Username or email <span className="text-[#8b765e]">*</span>
-                </span>
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
-                  <input
-                    type="text"
-                    value={identifier}
-                    onChange={(event) => {
-                      setIdentifier(event.target.value);
-                      if (notice) setNotice(null);
-                    }}
-                    className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
-                  />
-                </div>
-              </label>
+              {isResetMode ? (
+                <>
+                  <label className="block">
+                    <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
+                      New password <span className="text-[#8b765e]">*</span>
+                    </span>
+                    <div className="relative">
+                      <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(event) => {
+                          setNewPassword(event.target.value);
+                          if (notice) setNotice(null);
+                        }}
+                        className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
+                      />
+                    </div>
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
+                      Confirm new password <span className="text-[#8b765e]">*</span>
+                    </span>
+                    <div className="relative">
+                      <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(event) => {
+                          setConfirmPassword(event.target.value);
+                          if (notice) setNotice(null);
+                        }}
+                        className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
+                      />
+                    </div>
+                  </label>
+                </>
+              ) : (
+                <label className="block">
+                  <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
+                    Username or email <span className="text-[#8b765e]">*</span>
+                  </span>
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
+                    <input
+                      type="text"
+                      value={identifier}
+                      onChange={(event) => {
+                        setIdentifier(event.target.value);
+                        if (notice) setNotice(null);
+                      }}
+                      className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
+                    />
+                  </div>
+                </label>
+              )}
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <button
                   type="submit"
                   className="bg-[#1c1a17] px-8 py-3 text-xs font-bold uppercase tracking-[0.15em] text-white transition-colors hover:bg-stone-800"
                 >
-                  Reset password
+                  {isResetMode ? 'Save new password' : 'Reset password'}
                 </button>
                 <button
                   type="button"

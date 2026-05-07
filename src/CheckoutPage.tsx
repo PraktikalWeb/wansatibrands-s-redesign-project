@@ -234,9 +234,6 @@ export default function CheckoutPage({
                     Secure checkout
                   </p>
                   <h2 className="font-serif text-3xl text-stone-900">Checkout details</h2>
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-stone-600">
-                    The structure follows the original Wansati checkout flow, but rebuilt into the new storefront style.
-                  </p>
                 </div>
 
                 {notice ? <FormFeedback tone={notice.tone} message={notice.message} /> : null}
@@ -775,7 +772,7 @@ export default function CheckoutPage({
                   </div>
                 </section>
 
-                <div className="flex flex-col gap-4 border-t border-stone-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="hidden border-t border-stone-200 pt-6 lg:flex lg:flex-col lg:gap-4 xl:flex-row xl:items-center xl:justify-between">
                   <button
                     type="button"
                     onClick={() => navigateTo('/cart')}
@@ -921,6 +918,25 @@ export default function CheckoutPage({
                   </div>
                 </div>
               </aside>
+
+              <div className="flex flex-col gap-10 lg:hidden">
+                <button
+                  type="submit"
+                  form="checkout-form"
+                  className="btn-gold-textured px-8 py-4 text-xs font-bold uppercase tracking-[0.16em]"
+                >
+                  Place Order
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/cart')}
+                  className="inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-stone-500 transition-colors hover:text-stone-900"
+                >
+                  <ArrowRight size={14} strokeWidth={1.6} className="rotate-180" />
+                  Return to Cart
+                </button>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center border border-stone-100 bg-stone-50 py-12 text-center md:py-14">

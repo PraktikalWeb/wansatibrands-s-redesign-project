@@ -326,6 +326,7 @@ export default function App() {
     currentPath === '/register' ||
     currentPath === '/register/';
   const isLostPasswordPage = currentPath === '/my-account/lost-password' || currentPath === '/my-account/lost-password/';
+  const isResetPasswordPage = currentPath === '/my-account/reset-password' || currentPath === '/my-account/reset-password/';
   const authMode = currentPath.includes('register') ? 'register' : 'login';
   const blogArticleSlug = currentPath.startsWith('/blog/')
     ? currentPath.replace('/blog/', '').replace(/\/$/, '')
@@ -355,6 +356,7 @@ export default function App() {
       !isPrivacyPage &&
       !isTermsPage &&
       !isLostPasswordPage &&
+      !isResetPasswordPage &&
       !isShopPage &&
       !isCheckoutPage &&
       !isWishlistPage &&
@@ -1303,7 +1305,9 @@ export default function App() {
         ) : isAboutPage ? (
           <AboutPage navigateTo={navigateTo} />
         ) : isLostPasswordPage ? (
-          <LostPasswordPage navigateTo={navigateTo} />
+          <LostPasswordPage navigateTo={navigateTo} mode="request" />
+        ) : isResetPasswordPage ? (
+          <LostPasswordPage navigateTo={navigateTo} mode="reset" />
         ) : isAuthPage ? (
           <AuthPage navigateTo={navigateTo} mode={authMode} />
         ) : isBlogArticlePage ? (
