@@ -1195,9 +1195,9 @@ export default function App() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute inset-0 z-[70] overflow-y-auto bg-white px-4 pt-4 pb-6"
+              className="fixed inset-0 z-[120] bg-[rgba(252,252,249,0.98)] px-4 pt-4 pb-6 backdrop-blur-md"
             >
-              <div className="mx-auto w-full max-w-2xl">
+              <div className="mx-auto flex h-full w-full max-w-2xl flex-col">
                 <form
                   onSubmit={(event) => {
                     event.preventDefault();
@@ -1224,56 +1224,88 @@ export default function App() {
                   </button>
                 </form>
 
-                {siteSearchQuery.trim().length > 1 ? (
-                  searchSuggestions.length > 0 ? (
-                    <div className="mt-4 border border-stone-200 bg-white">
-                      <div className="border-b border-stone-100 px-4 py-3">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
-                      </div>
-                      <ul className="divide-y divide-stone-100">
+                <div className="mt-4 min-h-0 flex-1 overflow-y-auto">
+                  {siteSearchQuery.trim().length > 1 ? (
+                    searchSuggestions.length > 0 ? (
+                      <div className="overflow-hidden border border-stone-200 bg-white shadow-[0_24px_64px_rgba(28,26,23,0.08)]">
+                        <div className="flex items-center justify-between gap-4 border-b border-stone-100 px-4 py-3">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
+                            <p className="mt-1 text-xs text-stone-500">Tap a result or view the full results page.</p>
+                          </div>
+                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8b765e]">
+                            {searchSuggestions.length} found
+                          </span>
+                        </div>
+                        <ul className="max-h-[calc(100vh-15rem)] divide-y divide-stone-100 overflow-y-auto">
                         {searchSuggestions.map((result, index) => (
                           <li key={result.id}>
                             <button
                               type="button"
                               onClick={() => handleSearchResultSelect(result)}
-                              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
+                              className={`grid w-full grid-cols-[70px_minmax(0,1fr)] items-start gap-4 px-4 py-4 text-left transition-colors ${
                                 index === activeSearchIndex ? 'bg-[#f7f2ea]' : 'hover:bg-stone-50'
                               }`}
                             >
-                              <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
-                                {result.metaLabel}
-                              </span>
+                              <div className="relative h-[84px] overflow-hidden bg-stone-100">
+                                {result.image ? (
+                                  <img
+                                    src={result.image}
+                                    alt={result.title}
+                                    className="absolute inset-0 h-full w-full object-cover"
+                                    referrerPolicy="no-referrer"
+                                  />
+                                ) : (
+                                  <div className="flex h-full items-center justify-center text-stone-400">
+                                    <Search className="h-4 w-4" strokeWidth={1.6} />
+                                  </div>
+                                )}
+                              </div>
                               <div className="min-w-0 flex-1">
-                                <p className="text-sm text-stone-700">{renderSearchHighlight(result.title, siteSearchQuery)}</p>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
+                                    {result.metaLabel}
+                                  </span>
+                                  {result.priceLabel ? (
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-stone-500">
+                                      {result.priceLabel}
+                                    </span>
+                                  ) : null}
+                                </div>
+                                <p className="mt-2 text-sm font-medium leading-relaxed text-stone-800">
+                                  {renderSearchHighlight(result.title, siteSearchQuery)}
+                                </p>
+                                <p className="mt-1 line-clamp-2 text-xs leading-6 text-stone-500">{result.description}</p>
                                 {result.priceLabel ? (
-                                  <p className="mt-1 text-xs font-semibold text-stone-500">{result.priceLabel}</p>
+                                  <p className="mt-2 text-xs font-semibold text-stone-600">{result.priceLabel}</p>
                                 ) : null}
                               </div>
                             </button>
                           </li>
                         ))}
-                      </ul>
-                      <div className="border-t border-stone-200 px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => handleSearchSubmit(siteSearchQuery)}
-                          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-700 transition-colors hover:text-stone-900"
-                        >
-                          View all results
-                          <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
-                        </button>
+                        </ul>
+                        <div className="border-t border-stone-200 bg-[#fcfaf5] px-4 py-4">
+                          <button
+                            type="button"
+                            onClick={() => handleSearchSubmit(siteSearchQuery)}
+                            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-700 transition-colors hover:text-stone-900"
+                          >
+                            View all results
+                            <ArrowRight className="h-4 w-4" strokeWidth={1.7} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="border border-stone-200 bg-[#fcfaf5] px-4 py-5">
+                        <p className="text-sm text-stone-600">No quick matches found. Press enter to view full search results.</p>
+                      </div>
+                    )
                   ) : (
-                    <div className="mt-4 border border-stone-200 bg-[#fcfaf5] px-4 py-5">
-                      <p className="text-sm text-stone-600">No quick matches found. Press enter to view full search results.</p>
+                    <div className="border border-stone-200 bg-[#fcfaf5] px-4 py-5">
+                      <p className="text-sm text-stone-600">Try a product name, collection, article topic, or page title.</p>
                     </div>
-                  )
-                ) : (
-                  <div className="mt-4 border border-stone-200 bg-[#fcfaf5] px-4 py-5">
-                    <p className="text-sm text-stone-600">Try a product name, collection, article topic, or page title.</p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
@@ -1332,38 +1364,68 @@ export default function App() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
-                  className="absolute left-0 right-0 top-full mt-3 border border-stone-200 bg-white shadow-xl"
+                  className="absolute left-0 right-0 top-full z-[95] mt-4 overflow-hidden border border-stone-200 bg-white shadow-[0_24px_64px_rgba(28,26,23,0.12)]"
                 >
                   {searchSuggestions.length > 0 ? (
                     <>
-                      <div className="border-b border-stone-100 px-4 py-3">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
+                      <div className="flex items-center justify-between gap-4 border-b border-stone-100 px-4 py-3">
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">Suggested Matches</p>
+                          <p className="mt-1 text-xs text-stone-500">Use the dropdown for a quick jump or open the full results page.</p>
+                        </div>
+                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.18em] text-[#8b765e]">
+                          {searchSuggestions.length} found
+                        </span>
                       </div>
-                      <ul className="divide-y divide-stone-100">
+                      <ul className="max-h-[26rem] divide-y divide-stone-100 overflow-y-auto">
                         {searchSuggestions.map((result, index) => (
                           <li key={result.id}>
                             <button
                               type="button"
                               onClick={() => handleSearchResultSelect(result)}
-                              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
+                              className={`grid w-full grid-cols-[76px_minmax(0,1fr)_auto] items-start gap-4 px-4 py-4 text-left transition-colors ${
                                 index === activeSearchIndex ? 'bg-[#f7f2ea]' : 'hover:bg-stone-50'
                               }`}
                             >
-                              <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
-                                {result.metaLabel}
-                              </span>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-sm text-stone-700">{renderSearchHighlight(result.title, siteSearchQuery)}</p>
-                                <p className="mt-1 line-clamp-1 text-xs text-stone-500">{result.description}</p>
+                              <div className="relative h-20 overflow-hidden bg-stone-100">
+                                {result.image ? (
+                                  <img
+                                    src={result.image}
+                                    alt={result.title}
+                                    className="absolute inset-0 h-full w-full object-cover"
+                                    referrerPolicy="no-referrer"
+                                  />
+                                ) : (
+                                  <div className="flex h-full items-center justify-center text-stone-400">
+                                    <Search className="h-4 w-4" strokeWidth={1.6} />
+                                  </div>
+                                )}
                               </div>
-                              {result.priceLabel ? (
-                                <span className="text-xs font-semibold text-stone-500">{result.priceLabel}</span>
-                              ) : null}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b765e]">
+                                    {result.metaLabel}
+                                  </span>
+                                  {result.priceLabel ? (
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-stone-500">
+                                      {result.priceLabel}
+                                    </span>
+                                  ) : null}
+                                </div>
+                                <p className="mt-2 text-sm font-medium leading-relaxed text-stone-800">
+                                  {renderSearchHighlight(result.title, siteSearchQuery)}
+                                </p>
+                                <p className="mt-1 line-clamp-2 text-xs leading-6 text-stone-500">{result.description}</p>
+                              </div>
+                              <span className="mt-1 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-500">
+                                View
+                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.7} />
+                              </span>
                             </button>
                           </li>
                         ))}
                       </ul>
-                      <div className="border-t border-stone-200 px-4 py-3">
+                      <div className="border-t border-stone-200 bg-[#fcfaf5] px-4 py-4">
                         <button
                           type="button"
                           onClick={() => handleSearchSubmit(siteSearchQuery)}
