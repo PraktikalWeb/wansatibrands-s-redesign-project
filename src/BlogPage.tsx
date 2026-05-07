@@ -428,8 +428,8 @@ export default function BlogPage({ navigateTo }: BlogPageProps) {
                   We believe in beauty, wellbeing, and ideas that help women move with confidence.
                 </h2>
                 <p className="mt-4 max-w-2xl text-sm leading-relaxed text-stone-300 md:text-base">
-                  The journal now sits inside the rebuilt experience instead of feeling like a detached WordPress
-                  archive. That makes the brand story, product world, and editorial voice feel connected again.
+                  Every article invites you deeper into the Wansati world through fragrance inspiration, self-care
+                  rituals, and stories rooted in confidence, beauty, and intentional living.
                 </p>
               </div>
             </div>

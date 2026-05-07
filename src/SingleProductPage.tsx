@@ -1557,13 +1557,13 @@ export default function SingleProductPage({
                     className="h-5 w-auto opacity-80"
                   />
                 </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <img
                     src={yocoLogo}
                     alt="Yoco"
                     className="h-4 w-auto opacity-85"
                   />
-                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
+                  <div className="flex flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
                     {YOCO_ACCEPTED_CARDS.map((card) => (
                       <img
                         key={card.name}

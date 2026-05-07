@@ -689,7 +689,7 @@ export default function App() {
                   animate={{ x: 0 }}
                   exit={{ x: '100%' }}
                   transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                  className="fixed top-0 right-0 bottom-0 w-full sm:w-[400px] max-w-sm bg-white z-[101] shadow-2xl flex flex-col"
+                  className="fixed top-0 right-0 bottom-0 w-full sm:w-[400px] sm:max-w-[400px] lg:w-[440px] lg:max-w-[440px] xl:w-[460px] xl:max-w-[460px] bg-white z-[101] shadow-2xl flex flex-col"
                 >
                   <div className="px-5 py-3 flex items-center justify-between border-b border-stone-100">
                     <div className="flex items-center gap-3">
@@ -1678,13 +1678,13 @@ export default function App() {
                               />
                             </div>
 
-                            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center justify-between gap-3">
                               <img
                                 src={yocoLogo}
                                 alt="Yoco"
                                 className="h-4 w-auto shrink-0 opacity-85"
                               />
-                              <div className="flex w-full flex-wrap items-center gap-x-1.5 gap-y-2 sm:justify-end">
+                              <div className="flex w-full flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
                                 {yocoAcceptedCards.map((card) => (
                                   <img
                                     key={card.name}
@@ -2062,11 +2062,15 @@ export default function App() {
               <h3 className="font-serif text-2xl text-stone-800 tracking-tight">
                 Dresses
               </h3>
-              <a href="#" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
+              <button
+                type="button"
+                onClick={() => navigateTo(getProductListingPathByLabel('Dresses'))}
+                className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group"
+              >
                 <span className="sm:hidden">Explore</span>
                 <span className="hidden sm:inline">Explore Dresses</span>
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </a>
+              </button>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 md:gap-x-8 md:gap-y-12">
               {[
@@ -2156,11 +2160,15 @@ export default function App() {
               <h3 className="font-serif text-2xl text-stone-800 tracking-tight">
                 Men
               </h3>
-              <a href="#" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
+              <button
+                type="button"
+                onClick={() => navigateTo(getProductListingPathByLabel('Men'))}
+                className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group"
+              >
                 <span className="sm:hidden">Explore</span>
                 <span className="hidden sm:inline">Explore More</span>
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </a>
+              </button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6 md:gap-y-12">
               {[
@@ -2244,11 +2252,15 @@ export default function App() {
               <h3 className="font-serif text-2xl text-stone-800 tracking-tight">
                 Fragrances
               </h3>
-              <a href="https://www.wansatibrands.co.za/shop/fragrances/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group">
+              <button
+                type="button"
+                onClick={() => navigateTo(getProductListingPathByLabel('Fragrances'))}
+                className="flex items-center gap-1.5 text-[#c2a453] hover:text-[#a89279] text-xs sm:text-sm font-bold tracking-widest uppercase transition-colors group"
+              >
                 <span className="sm:hidden">Explore</span>
                 <span className="hidden sm:inline">Explore Fragrances</span>
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-              </a>
+              </button>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 md:gap-x-8 md:gap-y-12">
               {[
@@ -2664,13 +2676,13 @@ export default function App() {
                     className="h-5 w-auto opacity-80"
                   />
                 </div>
-                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between md:min-w-[19rem]">
+                <div className="flex items-center justify-between gap-3 md:min-w-[19rem]">
                   <img
                     src={yocoLogo}
                     alt="Yoco"
                     className="h-4 w-auto opacity-85"
                   />
-                  <div className="flex w-full flex-wrap items-center gap-x-1.5 gap-y-2 sm:justify-end">
+                  <div className="flex w-full flex-wrap items-center justify-end gap-x-1.5 gap-y-2">
                     {yocoAcceptedCards.map((card) => (
                       <img
                         key={card.name}
