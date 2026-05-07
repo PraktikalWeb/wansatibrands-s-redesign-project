@@ -45,6 +45,7 @@ import BlogArticlePage from './BlogArticlePage';
 import AuthPage from './AuthPage';
 import LostPasswordPage from './LostPasswordPage';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
+import CheckoutPage from './CheckoutPage';
 import {
   collectionPath,
   getCollectionBySlug,
@@ -309,6 +310,7 @@ export default function App() {
 
   const isCartPanel = activeSidePanel === 'cart';
   const isCartPage = currentPath === '/cart';
+  const isCheckoutPage = currentPath === '/checkout' || currentPath === '/checkout/';
   const isWishlistPage = currentPath === '/wishlist';
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
@@ -351,6 +353,7 @@ export default function App() {
       !isPrivacyPage &&
       !isLostPasswordPage &&
       !isShopPage &&
+      !isCheckoutPage &&
       !isWishlistPage &&
       !isCartPage);
   const displayedItems = isCartPanel ? cartItems : wishlistItems;
@@ -808,13 +811,16 @@ export default function App() {
                             >
                               View Cart
                             </button>
-                            <a
-                              href="/checkout"
-                              onClick={() => setActiveSidePanel(null)}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveSidePanel(null);
+                                navigateTo('/checkout');
+                              }}
                               className="btn-gold-textured flex-1 py-2.5 text-center text-xs font-bold tracking-widest uppercase"
                             >
                               Checkout
-                            </a>
+                            </button>
                           </div>
                         </div>
                       </>
@@ -1305,6 +1311,15 @@ export default function App() {
           <ContactPage navigateTo={navigateTo} />
         ) : isPrivacyPage ? (
           <PrivacyPolicyPage navigateTo={navigateTo} />
+        ) : isCheckoutPage ? (
+          <CheckoutPage
+            navigateTo={navigateTo}
+            cartItems={cartItems}
+            cartSubtotal={cartSubtotal}
+            deliveryFee={cartDeliveryFee}
+            formatRand={formatRand}
+            returnPolicyUrl={returnPolicyUrl}
+          />
         ) : isWishlistPage ? (
           <>
             <section className="relative overflow-hidden border-b border-stone-200 bg-[#f4ecdf]">
@@ -1699,7 +1714,11 @@ export default function App() {
                           </div>
                         </div>
 
-                        <button className="btn-gold-textured w-full py-4 text-xs font-bold tracking-widest uppercase shadow-md hover:shadow-lg transition-all mb-4">
+                        <button
+                          type="button"
+                          onClick={() => navigateTo('/checkout')}
+                          className="btn-gold-textured w-full py-4 text-xs font-bold tracking-widest uppercase shadow-md hover:shadow-lg transition-all mb-4"
+                        >
                           Proceed to Checkout
                         </button>
 

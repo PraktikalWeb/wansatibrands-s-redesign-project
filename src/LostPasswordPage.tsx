@@ -1,15 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Mail, ShieldCheck, User } from 'lucide-react';
+import FormFeedback, { FormFeedbackTone } from './FormFeedback';
 
 type LostPasswordPageProps = {
   navigateTo: (path: string) => void;
 };
 
+type FormNotice = {
+  tone: FormFeedbackTone;
+  message: string;
+} | null;
+
 const heroImage =
   'https://www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6563-scaled.jpg';
 
 export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) {
+  const [identifier, setIdentifier] = useState('');
+  const [notice, setNotice] = useState<FormNotice>(null);
+
+  const handleResetSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedIdentifier = identifier.trim();
+
+    if (!trimmedIdentifier) {
+      setNotice({
+        tone: 'error',
+        message: 'Please enter your username or email address before requesting a reset link.',
+      });
+      return;
+    }
+
+    setNotice({
+      tone: 'success',
+      message:
+        'Password reset email sent. If an account matches that username or email address, you will receive a reset link shortly.',
+    });
+  };
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-stone-200 bg-[#f4ecdf]">
@@ -61,7 +90,7 @@ export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) 
               <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-stone-500">Password Assistance</p>
             </div>
 
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6" noValidate onSubmit={handleResetSubmit}>
               <div>
                 <h2 className="font-serif text-3xl text-stone-900">Lost your password?</h2>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-stone-600">
@@ -69,6 +98,8 @@ export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) 
                   email.
                 </p>
               </div>
+
+              {notice ? <FormFeedback tone={notice.tone} message={notice.message} /> : null}
 
               <label className="block">
                 <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
@@ -78,7 +109,11 @@ export default function LostPasswordPage({ navigateTo }: LostPasswordPageProps) 
                   <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
                   <input
                     type="text"
-                    required
+                    value={identifier}
+                    onChange={(event) => {
+                      setIdentifier(event.target.value);
+                      if (notice) setNotice(null);
+                    }}
                     className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
                   />
                 </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Lock, Mail, ShieldCheck, User } from 'lucide-react';
+import FormFeedback, { FormFeedbackTone } from './FormFeedback';
 
 type AuthMode = 'login' | 'register';
 
@@ -9,19 +10,93 @@ type AuthPageProps = {
   navigateTo: (path: string) => void;
 };
 
+type FormNotice = {
+  tone: FormFeedbackTone;
+  message: string;
+} | null;
+
 const heroImage =
   'https://www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6563-scaled.jpg';
 
 export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
   const [activeMode, setActiveMode] = useState<AuthMode>(mode);
+  const [loginIdentifier, setLoginIdentifier] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginNotice, setLoginNotice] = useState<FormNotice>(null);
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerNotice, setRegisterNotice] = useState<FormNotice>(null);
+
+  const clearFormNotices = () => {
+    setLoginNotice(null);
+    setRegisterNotice(null);
+  };
 
   useEffect(() => {
     setActiveMode(mode);
+    clearFormNotices();
   }, [mode]);
 
   const switchMode = (nextMode: AuthMode) => {
     setActiveMode(nextMode);
+    clearFormNotices();
     navigateTo(nextMode === 'login' ? '/my-account' : '/my-account/register');
+  };
+
+  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedIdentifier = loginIdentifier.trim();
+
+    if (!trimmedIdentifier || !loginPassword.trim()) {
+      setLoginNotice({
+        tone: 'error',
+        message: 'Please enter both your username or email address and your password.',
+      });
+      return;
+    }
+
+    if (loginPassword.trim().length < 6) {
+      setLoginNotice({
+        tone: 'error',
+        message: 'Your password looks too short. Please check it and try again.',
+      });
+      return;
+    }
+
+    setLoginNotice({
+      tone: 'error',
+      message: 'Incorrect username, email, or password. Please try again.',
+    });
+  };
+
+  const handleRegisterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedEmail = registerEmail.trim();
+
+    if (!trimmedEmail) {
+      setRegisterNotice({
+        tone: 'error',
+        message: 'Please enter your email address to continue with registration.',
+      });
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      setRegisterNotice({
+        tone: 'error',
+        message: 'Please enter a valid email address before creating your account.',
+      });
+      return;
+    }
+
+    setRegisterNotice({
+      tone: 'success',
+      message:
+        'Registration confirmation sent. Please check your inbox for the next steps to set your password and finish creating your account.',
+    });
   };
 
   return (
@@ -116,10 +191,12 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
               </div>
 
               {activeMode === 'login' ? (
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-6" noValidate onSubmit={handleLoginSubmit}>
                   <div>
                     <h2 className="font-serif text-3xl text-stone-900">Sign In</h2>
                   </div>
+
+                  {loginNotice ? <FormFeedback tone={loginNotice.tone} message={loginNotice.message} /> : null}
 
                   <label className="block">
                     <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
@@ -129,7 +206,11 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
                       <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
                       <input
                         type="text"
-                        required
+                        value={loginIdentifier}
+                        onChange={(event) => {
+                          setLoginIdentifier(event.target.value);
+                          if (loginNotice) setLoginNotice(null);
+                        }}
                         className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
                       />
                     </div>
@@ -143,7 +224,11 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
                       <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
                       <input
                         type="password"
-                        required
+                        value={loginPassword}
+                        onChange={(event) => {
+                          setLoginPassword(event.target.value);
+                          if (loginNotice) setLoginNotice(null);
+                        }}
                         className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
                       />
                     </div>
@@ -182,10 +267,12 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
                   </p>
                 </form>
               ) : (
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-6" noValidate onSubmit={handleRegisterSubmit}>
                   <div>
                     <h2 className="font-serif text-3xl text-stone-900">Register</h2>
                   </div>
+
+                  {registerNotice ? <FormFeedback tone={registerNotice.tone} message={registerNotice.message} /> : null}
 
                   <label className="block">
                     <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-stone-700">
@@ -195,7 +282,11 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
                       <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" strokeWidth={1.7} />
                       <input
                         type="email"
-                        required
+                        value={registerEmail}
+                        onChange={(event) => {
+                          setRegisterEmail(event.target.value);
+                          if (registerNotice) setRegisterNotice(null);
+                        }}
                         className="w-full border border-stone-300 bg-white py-3 pl-11 pr-4 text-sm text-stone-700 outline-none transition-colors focus:border-stone-500"
                       />
                     </div>
