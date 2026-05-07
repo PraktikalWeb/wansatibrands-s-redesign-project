@@ -43,6 +43,7 @@ import AboutPage from './AboutPage';
 import BlogPage from './BlogPage';
 import BlogArticlePage from './BlogArticlePage';
 import AuthPage from './AuthPage';
+import LostPasswordPage from './LostPasswordPage';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
 import {
   collectionPath,
@@ -321,6 +322,7 @@ export default function App() {
     currentPath === '/sign-in/' ||
     currentPath === '/register' ||
     currentPath === '/register/';
+  const isLostPasswordPage = currentPath === '/my-account/lost-password' || currentPath === '/my-account/lost-password/';
   const authMode = currentPath.includes('register') ? 'register' : 'login';
   const blogArticleSlug = currentPath.startsWith('/blog/')
     ? currentPath.replace('/blog/', '').replace(/\/$/, '')
@@ -347,6 +349,7 @@ export default function App() {
       !isBlogPage &&
       !isContactPage &&
       !isPrivacyPage &&
+      !isLostPasswordPage &&
       !isShopPage &&
       !isWishlistPage &&
       !isCartPage);
@@ -1290,6 +1293,8 @@ export default function App() {
           />
         ) : isAboutPage ? (
           <AboutPage navigateTo={navigateTo} />
+        ) : isLostPasswordPage ? (
+          <LostPasswordPage navigateTo={navigateTo} />
         ) : isAuthPage ? (
           <AuthPage navigateTo={navigateTo} mode={authMode} />
         ) : isBlogArticlePage ? (
@@ -2336,6 +2341,7 @@ export default function App() {
                   img: "https://i0.wp.com/www.wansatibrands.co.za/wp-content/uploads/2024/03/Men-Gucci-Oud-Photoroom.png?fit=800%2C800&ssl=1",
                   link: "https://www.wansatibrands.co.za/shop/fragrances/",
                   onSale: true,
+                  soldOut: true,
                 }
               ].map((product, idx) => {
                 const internalPath = getProductCardPath(product.title);
@@ -2353,13 +2359,20 @@ export default function App() {
 	                  className="luxury-product-card group cursor-pointer flex h-full flex-col"
 	                >
 	                  <div className="luxury-image-frame relative w-full aspect-square bg-stone-100 overflow-hidden mb-4 md:mb-5">
-	                    {product.onSale && (
-	                      <div className="absolute top-3 left-3 z-10">
-                        <span className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold tracking-widest uppercase shadow-sm">
-                          Sale
+	                    {product.onSale || product.soldOut ? (
+                        <div className="absolute top-3 left-3 z-10 flex flex-col items-start gap-2">
+	                      {product.onSale ? (
+                          <span className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold tracking-widest uppercase shadow-sm">
+                            Sale
 	                        </span>
-	                      </div>
-	                    )}
+	                      ) : null}
+	                      {product.soldOut ? (
+                          <span className="bg-stone-900 text-white px-3 py-1 text-[10px] font-bold tracking-widest uppercase shadow-sm">
+                            Sold Out
+	                        </span>
+	                      ) : null}
+                        </div>
+	                    ) : null}
 	                    <button
 	                      type="button"
 	                      onClick={(event) => {
@@ -2383,7 +2396,9 @@ export default function App() {
 	                    <img
 	                      src={product.img}
 	                      alt={product.title}
-                      className="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+                      className={`absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105 ${
+                        product.soldOut ? 'grayscale opacity-55' : ''
+                      }`}
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -2393,7 +2408,7 @@ export default function App() {
                   <p className="mb-3 text-sm text-stone-500 font-semibold">{product.price}</p>
                   <span className="btn-gold-textured premium-select-button mt-auto w-full py-3 text-[10px] font-bold tracking-widest uppercase flex items-center justify-center gap-2">
                     <ShoppingCart className="w-3.5 h-3.5" />
-                    <span>Select Options</span>
+                    <span>{product.soldOut ? 'View Options' : 'Select Options'}</span>
                   </span>
                 </a>
                 );
@@ -2428,7 +2443,11 @@ export default function App() {
                 <h3 className="font-serif text-2xl mb-4 drop-shadow-sm">
                   African Prints
                 </h3>
-                <button className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start">
+                <button
+                  type="button"
+                  onClick={() => navigateTo(getProductListingPathByLabel('African Print'))}
+                  className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start"
+                >
                   Explore
                 </button>
               </div>
@@ -2448,7 +2467,11 @@ export default function App() {
                 <h3 className="font-serif text-2xl mb-4 drop-shadow-sm">
                   Exclusive Dresses
                 </h3>
-                <button className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start">
+                <button
+                  type="button"
+                  onClick={() => navigateTo(getProductListingPathByLabel('Exclusive Range'))}
+                  className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start"
+                >
                   Explore
                 </button>
               </div>
@@ -2468,7 +2491,11 @@ export default function App() {
                 <h3 className="font-serif text-2xl mb-4 drop-shadow-sm">
                   Menswear
                 </h3>
-                <button className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start">
+                <button
+                  type="button"
+                  onClick={() => navigateTo(getProductListingPathByLabel('Men'))}
+                  className="btn-gold-textured px-6 py-2 text-xs font-bold tracking-widest uppercase self-start"
+                >
                   Explore
                 </button>
               </div>
@@ -2671,7 +2698,7 @@ export default function App() {
             <div className="col-span-1">
               <h4 className="font-bold tracking-wider mb-6 text-sm uppercase">Quick Links</h4>
               <ul className="space-y-3 text-stone-400 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
+                <li><button type="button" onClick={() => navigateTo('/')} className="hover:text-white transition-colors">Home</button></li>
                 <li><button type="button" onClick={() => navigateTo('/about')} className="hover:text-white transition-colors">About Us</button></li>
                 <li><button type="button" onClick={() => navigateTo(productListingPath())} className="hover:text-white transition-colors">Shop</button></li>
                 <li><button type="button" onClick={() => navigateTo('/blog')} className="hover:text-white transition-colors">Blog</button></li>

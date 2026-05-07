@@ -156,6 +156,7 @@ export default function AuthPage({ mode, navigateTo }: AuthPageProps) {
                     </label>
                     <button
                       type="button"
+                      onClick={() => navigateTo('/my-account/lost-password')}
                       className="self-start text-sm text-stone-500 transition-colors hover:text-stone-900"
                     >
                       Lost your password?

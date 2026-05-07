@@ -274,11 +274,13 @@ export const COLLECTION_PRODUCTS: CollectionProduct[] = [
   {
     id: 'tsonga-home-diffuser',
     title: 'Tsonga Home Diffuser',
-    priceLabel: 'R420.00',
-    numericPrice: 420,
+    priceLabel: 'R320.00',
+    numericPrice: 320,
     image: 'https://www.wansatibrands.co.za/wp-content/uploads/2023/09/Diffuser-1.jpg',
     path: '/product/tsonga-home-diffuser',
     inStock: false,
+    onSale: true,
+    compareAtPriceLabel: 'R420.00',
     collectionSlugs: ['fragrances', 'home-fragrance', 'sale'],
   },
   {

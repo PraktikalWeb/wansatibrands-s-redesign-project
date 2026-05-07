@@ -179,18 +179,18 @@ function CollectionProductCard({
   return (
     <div className="luxury-product-card group flex h-full flex-col">
       <div className="luxury-image-frame relative mb-4 aspect-[3/4] overflow-hidden bg-stone-100">
-        {product.onSale ? (
-          <div className="absolute left-3 top-3 z-10">
-            <span className="bg-red-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
-              Sale
-            </span>
-          </div>
-        ) : null}
-        {!product.inStock ? (
-          <div className="absolute left-3 top-3 z-10">
-            <span className="bg-stone-900 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
-              Sold Out
-            </span>
+        {product.onSale || !product.inStock ? (
+          <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
+            {product.onSale ? (
+              <span className="bg-red-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
+                Sale
+              </span>
+            ) : null}
+            {!product.inStock ? (
+              <span className="bg-stone-900 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm">
+                Sold Out
+              </span>
+            ) : null}
           </div>
         ) : null}
         <button

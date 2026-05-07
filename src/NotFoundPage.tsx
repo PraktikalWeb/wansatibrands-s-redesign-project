@@ -35,7 +35,7 @@ export default function NotFoundPage({ navigateTo }: NotFoundPageProps) {
       </section>
 
       <section className="mx-auto max-w-[1200px] px-4 py-14 sm:px-8 md:py-18">
-        <div className="border border-stone-200 bg-[#fcfaf5] px-6 py-12 text-center md:px-10 md:py-16">
+        <div className="px-2 py-4 text-center md:px-10">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-stone-300 text-stone-500">
             <Search className="h-6 w-6" strokeWidth={1.6} />
           </div>
