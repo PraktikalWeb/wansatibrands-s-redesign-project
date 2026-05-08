@@ -9,6 +9,8 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
+$is_woocommerce_active = function_exists('wansati_theme_is_woocommerce_active') && wansati_theme_is_woocommerce_active();
+
 $sections = array(
 	array(
 		'title' => __('Dresses', 'wansati'),
@@ -33,6 +35,12 @@ $sections = array(
 		<h2><?php esc_html_e('Shop the Signature Edit', 'wansati'); ?></h2>
 	</div>
 
+	<?php if (! $is_woocommerce_active) : ?>
+		<div class="wansati-empty-state">
+			<h3><?php esc_html_e('WooCommerce is not active yet.', 'wansati'); ?></h3>
+			<p><?php esc_html_e('Activate WooCommerce on staging to replace this placeholder with real product sections.', 'wansati'); ?></p>
+		</div>
+	<?php else : ?>
 	<?php foreach ($sections as $section) : ?>
 		<?php
 		$term = get_term_by('slug', $section['slug'], 'product_cat');
@@ -82,4 +90,5 @@ $sections = array(
 			<?php endif; ?>
 		</div>
 	<?php endforeach; ?>
+	<?php endif; ?>
 </section>

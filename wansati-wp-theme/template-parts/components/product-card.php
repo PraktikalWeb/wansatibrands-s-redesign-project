@@ -11,6 +11,10 @@ if (! defined('ABSPATH')) {
 
 $product = $args['product'] ?? null;
 
+if (! class_exists('WC_Product') || ! function_exists('woocommerce_template_loop_add_to_cart')) {
+	return;
+}
+
 if (! $product instanceof WC_Product) {
 	return;
 }
@@ -21,6 +25,7 @@ $stock_html    = wc_get_stock_html($product);
 $button_html   = '';
 $previous_product = $GLOBALS['product'] ?? null;
 
+// Preserve WooCommerce's native loop button behavior for AJAX add-to-cart, variation routing, and plugin hooks.
 $GLOBALS['product'] = $product;
 
 ob_start();

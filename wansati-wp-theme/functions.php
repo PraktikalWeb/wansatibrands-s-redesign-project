@@ -12,6 +12,13 @@ if (! defined('ABSPATH')) {
 define('WANSATI_THEME_VERSION', '0.1.0');
 
 /**
+ * Central WooCommerce availability check for templates and helpers.
+ */
+function wansati_theme_is_woocommerce_active(): bool {
+	return class_exists('WooCommerce');
+}
+
+/**
  * Resolve a theme asset version from filemtime where possible.
  */
 function wansati_theme_asset_version(string $relative_path): string {
@@ -84,7 +91,7 @@ function wansati_theme_enqueue_assets(): void {
 	wp_enqueue_script('wansati-main', get_theme_file_uri('/assets/js/main.js'), array(), wansati_theme_asset_version('/assets/js/main.js'), true);
 	$side_cart_dependencies = array('wansati-main');
 
-	if (class_exists('WooCommerce')) {
+	if (wansati_theme_is_woocommerce_active()) {
 		$side_cart_dependencies[] = 'wc-cart-fragments';
 	}
 
@@ -103,7 +110,7 @@ function wansati_theme_enqueue_assets(): void {
 			'cartUrl'       => function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart/'),
 			'checkoutUrl'   => function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : home_url('/checkout/'),
 			'accountUrl'    => function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url(),
-			'isWooEnabled'  => class_exists('WooCommerce'),
+			'isWooEnabled'  => wansati_theme_is_woocommerce_active(),
 			'isUserLoggedIn'=> is_user_logged_in(),
 		)
 	);
@@ -112,7 +119,7 @@ function wansati_theme_enqueue_assets(): void {
 		wp_enqueue_script('comment-reply');
 	}
 
-	if (class_exists('WooCommerce')) {
+	if (wansati_theme_is_woocommerce_active()) {
 		wp_enqueue_script('wc-add-to-cart');
 	}
 }
@@ -132,7 +139,7 @@ add_action('init', 'wansati_theme_cleanup');
  * Replace WooCommerce wrappers with theme wrappers.
  */
 function wansati_theme_setup_woocommerce_wrappers(): void {
-	if (! class_exists('WooCommerce')) {
+	if (! wansati_theme_is_woocommerce_active()) {
 		return;
 	}
 
@@ -148,7 +155,7 @@ add_action('after_setup_theme', 'wansati_theme_setup_woocommerce_wrappers', 20);
  * Move the default shop ordering and count into the custom archive toolbar.
  */
 function wansati_theme_customize_shop_loop_actions(): void {
-	if (! class_exists('WooCommerce')) {
+	if (! wansati_theme_is_woocommerce_active()) {
 		return;
 	}
 
@@ -230,7 +237,13 @@ function wansati_theme_tune_search_query(WP_Query $query): void {
 		return;
 	}
 
-	$query->set('post_type', array('product', 'page', 'post'));
+	$post_types = array('page', 'post');
+
+	if (wansati_theme_is_woocommerce_active()) {
+		array_unshift($post_types, 'product');
+	}
+
+	$query->set('post_type', $post_types);
 }
 add_action('pre_get_posts', 'wansati_theme_tune_search_query');
 
@@ -257,6 +270,10 @@ function wansati_theme_get_collection_url(string $slug = ''): string {
 		return wansati_theme_get_shop_url();
 	}
 
+	if (! taxonomy_exists('product_cat')) {
+		return wansati_theme_get_shop_url();
+	}
+
 	$term = get_term_by('slug', $slug, 'product_cat');
 
 	if ($term && ! is_wp_error($term)) {
@@ -274,6 +291,10 @@ function wansati_theme_get_collection_url(string $slug = ''): string {
  * Resolve a product category image by slug, falling back to the provided URL.
  */
 function wansati_theme_get_collection_image_url(string $slug, string $fallback = ''): string {
+	if (! taxonomy_exists('product_cat')) {
+		return $fallback;
+	}
+
 	$term = get_term_by('slug', $slug, 'product_cat');
 
 	if ($term && ! is_wp_error($term)) {
@@ -295,6 +316,10 @@ function wansati_theme_get_collection_image_url(string $slug, string $fallback =
  * Return a product category count by slug.
  */
 function wansati_theme_get_collection_count(string $slug): int {
+	if (! taxonomy_exists('product_cat')) {
+		return 0;
+	}
+
 	$term = get_term_by('slug', $slug, 'product_cat');
 
 	if ($term && ! is_wp_error($term)) {
@@ -320,7 +345,7 @@ function wansati_theme_get_collection_card_context(array $defaults): array {
 	$count     = 0;
 	$url       = $slug !== '' ? wansati_theme_get_collection_url($slug) : '#';
 
-	if ($slug !== '') {
+	if ($slug !== '' && taxonomy_exists('product_cat')) {
 		$term = get_term_by('slug', $slug, 'product_cat');
 
 		if ($term && ! is_wp_error($term)) {

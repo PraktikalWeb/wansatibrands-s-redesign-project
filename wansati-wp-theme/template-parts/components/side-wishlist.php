@@ -20,6 +20,7 @@ if (! defined('ABSPATH')) {
 		</div>
 
 		<div class="wansati-panel__body">
+			<?php // Wishlist support is intentionally left as a theme scaffold until a real plugin/integration is chosen. ?>
 			<?php do_action('wansati_theme_wishlist_drawer'); ?>
 		</div>
 	</div>

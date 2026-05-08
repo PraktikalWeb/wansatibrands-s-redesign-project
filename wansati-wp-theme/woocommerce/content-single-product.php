@@ -27,6 +27,7 @@ if (post_password_required()) {
 				<?php echo esc_html($product && $product->is_on_sale() ? __('Limited Offer', 'wansati') : __('Wansati Edit', 'wansati')); ?>
 			</p>
 
+			<?php // Preserve the native WooCommerce summary hook stack for price, variations, add-to-cart, meta, and extension output. ?>
 			<?php do_action('woocommerce_single_product_summary'); ?>
 
 			<div class="wansati-single-product__secondary-actions">

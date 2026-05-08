@@ -142,6 +142,7 @@ do_action('woocommerce_before_cart');
 										</div>
 									<?php endif; ?>
 
+									<?php // Keep native cart actions intact so coupons, totals, and discount plugins continue to work. ?>
 									<button type="submit" class="button" name="update_cart" value="<?php esc_attr_e('Update cart', 'wansati'); ?>"><?php esc_html_e('Update cart', 'wansati'); ?></button>
 
 									<?php do_action('woocommerce_cart_actions'); ?>
@@ -158,6 +159,7 @@ do_action('woocommerce_before_cart');
 					<aside class="wansati-cart-totals">
 						<?php do_action('woocommerce_before_cart_collaterals'); ?>
 						<div class="cart-collaterals">
+							<?php // Native WooCommerce cart collaterals keep totals, shipping, taxes, and discount rules on the standard hook path. ?>
 							<?php do_action('woocommerce_cart_collaterals'); ?>
 						</div>
 						<?php do_action('woocommerce_after_cart_collaterals'); ?>

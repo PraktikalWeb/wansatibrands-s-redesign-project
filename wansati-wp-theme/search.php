@@ -46,7 +46,7 @@ $result_count = (int) $GLOBALS['wp_query']->found_posts;
 
 			<div class="wansati-search-results__grid">
 				<?php while (have_posts()) : the_post(); ?>
-					<?php if ('product' === get_post_type() && function_exists('wc_get_product')) : ?>
+					<?php if ('product' === get_post_type() && function_exists('wc_get_product') && class_exists('WC_Product')) : ?>
 						<?php
 						$search_product = wc_get_product(get_the_ID());
 

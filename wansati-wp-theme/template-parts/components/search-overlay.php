@@ -9,15 +9,19 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-$suggested_terms = get_terms(
-	array(
-		'taxonomy'   => 'product_cat',
-		'hide_empty' => true,
-		'number'     => 4,
-		'orderby'    => 'count',
-		'order'      => 'DESC',
-	)
-);
+$suggested_terms = array();
+
+if (taxonomy_exists('product_cat')) {
+	$suggested_terms = get_terms(
+		array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => true,
+			'number'     => 4,
+			'orderby'    => 'count',
+			'order'      => 'DESC',
+		)
+	);
+}
 
 $fallback_suggestions = array(
 	array(
