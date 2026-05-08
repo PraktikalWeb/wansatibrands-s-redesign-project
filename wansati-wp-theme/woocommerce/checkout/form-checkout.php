@@ -57,6 +57,11 @@ if (! $checkout->is_registration_enabled() && $checkout->is_registration_require
 					<div class="wansati-checkout-note">
 						<p class="wansati-panel__eyebrow"><?php esc_html_e('Secure Checkout', 'wansati'); ?></p>
 						<p><?php esc_html_e('Payment gateways, totals, coupons, shipping, and discount rules are rendered by WooCommerce and its active gateway extensions.', 'wansati'); ?></p>
+
+						<div class="wansati-checkout-note__logos" aria-label="<?php esc_attr_e('Accepted payment brands', 'wansati'); ?>">
+							<img src="<?php echo esc_url(get_theme_file_uri('/assets/images/payfast-logo.svg')); ?>" alt="<?php esc_attr_e('Payfast', 'wansati'); ?>">
+							<img src="<?php echo esc_url(get_theme_file_uri('/assets/images/yoco-logo.svg')); ?>" alt="<?php esc_attr_e('Yoco', 'wansati'); ?>">
+						</div>
 					</div>
 				</aside>
 			</div>

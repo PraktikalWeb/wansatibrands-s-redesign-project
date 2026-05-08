@@ -22,6 +22,16 @@
 		display: inline-flex;
 	}
 
+	.wansati-icon-button {
+		width: 2.9rem;
+		min-height: 2.9rem;
+		padding: 0;
+	}
+
+	.wansati-icon-button__label {
+		display: none;
+	}
+
 	.wansati-header-search--desktop,
 	.wansati-nav--desktop {
 		display: none;
@@ -67,6 +77,14 @@
 	.wansati-product-section__header {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.wansati-shop-filter-toggle {
+		display: inline-flex;
+	}
+
+	.wansati-shop-sidebar {
+		display: none;
 	}
 
 	.wansati-shop-sidebar,
@@ -126,6 +144,11 @@
 		flex-direction: column;
 	}
 
+	.wansati-search-overlay__inner {
+		width: min(calc(100% - 1.25rem), 58rem);
+		margin-top: 3.5rem;
+	}
+
 	.wansati-footer__legal {
 		gap: 0.6rem 1rem;
 	}
@@ -143,7 +166,7 @@
 
 	.wansati-icon-button {
 		width: 2.55rem;
-		height: 2.55rem;
+		min-height: 2.55rem;
 	}
 
 	.wansati-collection-grid--six,
@@ -167,5 +190,62 @@
 	.wansati-panel--menu .wansati-panel__dialog,
 	.wansati-panel--side .wansati-panel__dialog {
 		width: 100%;
+	}
+
+	.wansati-shop-toolbar {
+		align-items: stretch;
+	}
+
+	.wansati-shop-toolbar__actions,
+	.wansati-shop-toolbar__ordering,
+	.wansati-shop-toolbar__ordering select,
+	.wansati-shop-filter-toggle {
+		width: 100%;
+	}
+
+	.wansati-shop-toolbar__ordering select {
+		min-width: 0;
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item {
+		display: block;
+		margin-bottom: 1rem;
+		padding: 1rem;
+		border: 1px solid #ccc3b7;
+		background: #fff;
+		box-shadow: 0 18px 40px rgba(41, 37, 36, 0.05);
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item td::before {
+		float: none;
+		margin-right: auto;
+		padding-right: 1rem;
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item .product-thumbnail,
+	.woocommerce table.shop_table_responsive tr.cart_item .product-name {
+		display: block;
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item .product-name::before,
+	.woocommerce table.shop_table_responsive tr.cart_item .product-thumbnail::before {
+		display: none;
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item .product-thumbnail a {
+		display: inline-block;
+	}
+
+	.woocommerce table.shop_table_responsive tr.cart_item .product-remove {
+		justify-content: flex-end;
 	}
 }

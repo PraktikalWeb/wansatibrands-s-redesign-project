@@ -1,4 +1,16 @@
 (function () {
+	function syncPanelTriggers(panelId, expanded) {
+		document.querySelectorAll('[data-open-panel="' + panelId + '"]').forEach(function (trigger) {
+			trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+		});
+	}
+
+	function syncSearchTriggers(expanded) {
+		document.querySelectorAll('[data-open-search]').forEach(function (trigger) {
+			trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+		});
+	}
+
 	function closeSearch() {
 		var searchOverlay = document.getElementById('wansati-search-overlay');
 
@@ -9,6 +21,7 @@
 		searchOverlay.classList.remove('is-active');
 		searchOverlay.setAttribute('aria-hidden', 'true');
 		document.body.classList.remove('has-search-open');
+		syncSearchTriggers(false);
 		document.dispatchEvent(new CustomEvent('wansati:search-close'));
 	}
 
@@ -22,6 +35,7 @@
 		panel.classList.remove('is-active');
 		panel.setAttribute('aria-hidden', 'true');
 		document.body.classList.remove('has-panel-open');
+		syncPanelTriggers(panelId, false);
 		document.dispatchEvent(new CustomEvent('wansati:panel-close', { detail: { id: panelId } }));
 	}
 
@@ -43,6 +57,7 @@
 		panel.classList.add('is-active');
 		panel.setAttribute('aria-hidden', 'false');
 		document.body.classList.add('has-panel-open');
+		syncPanelTriggers(panelId, true);
 		document.dispatchEvent(new CustomEvent('wansati:panel-open', { detail: { id: panelId } }));
 	}
 
@@ -57,6 +72,7 @@
 		searchOverlay.classList.add('is-active');
 		searchOverlay.setAttribute('aria-hidden', 'false');
 		document.body.classList.add('has-search-open');
+		syncSearchTriggers(true);
 		document.dispatchEvent(new CustomEvent('wansati:search-open'));
 	}
 

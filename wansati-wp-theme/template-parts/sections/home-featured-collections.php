@@ -9,6 +9,8 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
+// TODO: These remote image URLs are fallback art direction only. Replace them
+// with Media Library images or product category thumbnails during content entry.
 $collections = array(
 	array(
 		'title'   => __('Kimono', 'wansati'),

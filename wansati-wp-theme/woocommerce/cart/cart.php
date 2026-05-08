@@ -155,15 +155,38 @@ do_action('woocommerce_before_cart');
 					<?php do_action('woocommerce_after_cart_table'); ?>
 				</div>
 
-				<aside class="wansati-cart-totals">
-					<?php do_action('woocommerce_before_cart_collaterals'); ?>
-					<div class="cart-collaterals">
-						<?php do_action('woocommerce_cart_collaterals'); ?>
-					</div>
-					<?php do_action('woocommerce_after_cart_collaterals'); ?>
-				</aside>
-			</div>
-		</form>
+					<aside class="wansati-cart-totals">
+						<?php do_action('woocommerce_before_cart_collaterals'); ?>
+						<div class="cart-collaterals">
+							<?php do_action('woocommerce_cart_collaterals'); ?>
+						</div>
+						<?php do_action('woocommerce_after_cart_collaterals'); ?>
+
+						<div class="wansati-cart-reassurance">
+							<div class="wansati-cart-reassurance__item">
+								<?php echo wansati_theme_get_icon_svg('truck'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<div>
+									<strong><?php esc_html_e('Delivery', 'wansati'); ?></strong>
+									<p><?php esc_html_e('Shipping options and taxes are calculated by WooCommerce during checkout.', 'wansati'); ?></p>
+								</div>
+							</div>
+
+							<div class="wansati-cart-reassurance__item">
+								<?php echo wansati_theme_get_icon_svg('shield-check'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								<div>
+									<strong><?php esc_html_e('Secure payments', 'wansati'); ?></strong>
+									<p><?php esc_html_e('Payfast, Yoco, WooPayments, and active gateways remain WooCommerce-native.', 'wansati'); ?></p>
+								</div>
+							</div>
+
+							<div class="wansati-cart-reassurance__logos" aria-label="<?php esc_attr_e('Accepted payment brands', 'wansati'); ?>">
+								<img src="<?php echo esc_url(get_theme_file_uri('/assets/images/payfast-logo.svg')); ?>" alt="<?php esc_attr_e('Payfast', 'wansati'); ?>">
+								<img src="<?php echo esc_url(get_theme_file_uri('/assets/images/yoco-logo.svg')); ?>" alt="<?php esc_attr_e('Yoco', 'wansati'); ?>">
+							</div>
+						</div>
+					</aside>
+				</div>
+			</form>
 	</section>
 </main>
 <?php do_action('woocommerce_after_cart'); ?>

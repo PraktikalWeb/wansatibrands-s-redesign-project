@@ -14,6 +14,14 @@ do_action('woocommerce_before_main_content');
 $archive_title       = woocommerce_page_title(false);
 $archive_description = '';
 $current_term_id     = 0;
+$featured_tags       = get_terms(
+	array(
+		'taxonomy'   => 'product_tag',
+		'hide_empty' => true,
+		'number'     => 8,
+	)
+);
+$total_products      = (int) wc_get_loop_prop('total');
 
 if (is_tax('product_cat') || is_tax('product_tag')) {
 	$archive_description = term_description();
@@ -42,54 +50,29 @@ if (is_tax('product_cat') || is_tax('product_tag')) {
 <?php if (woocommerce_product_loop()) : ?>
 	<section class="wansati-shop-layout">
 		<aside class="wansati-shop-sidebar">
-			<div class="wansati-shop-sidebar__card">
-				<h2><?php esc_html_e('Browse Collections', 'wansati'); ?></h2>
-				<ul class="wansati-shop-sidebar__list">
-					<?php
-					wp_list_categories(
-						array(
-							'taxonomy'         => 'product_cat',
-							'title_li'         => '',
-							'hide_empty'       => true,
-							'show_count'       => true,
-							'depth'            => 1,
-							'orderby'          => 'name',
-							'current_category' => $current_term_id,
-						)
-					);
-					?>
-				</ul>
-			</div>
-
 			<?php
-			$featured_tags = get_terms(
+			get_template_part(
+				'template-parts/components/shop-filters',
+				null,
 				array(
-					'taxonomy'   => 'product_tag',
-					'hide_empty' => true,
-					'number'     => 8,
+					'current_term_id' => $current_term_id,
+					'featured_tags'   => $featured_tags,
 				)
 			);
 			?>
-
-			<?php if (! empty($featured_tags) && ! is_wp_error($featured_tags)) : ?>
-				<div class="wansati-shop-sidebar__card">
-					<h2><?php esc_html_e('Popular Tags', 'wansati'); ?></h2>
-					<div class="wansati-shop-sidebar__tags">
-						<?php foreach ($featured_tags as $featured_tag) : ?>
-							<?php $featured_tag_link = get_term_link($featured_tag); ?>
-							<?php if (! is_wp_error($featured_tag_link)) : ?>
-								<a href="<?php echo esc_url($featured_tag_link); ?>"><?php echo esc_html($featured_tag->name); ?></a>
-							<?php endif; ?>
-						<?php endforeach; ?>
-					</div>
-				</div>
-			<?php endif; ?>
 		</aside>
 
 		<div class="wansati-shop-results">
 			<div class="wansati-shop-toolbar">
-				<div class="wansati-shop-toolbar__count">
-					<?php woocommerce_result_count(); ?>
+				<div class="wansati-shop-toolbar__actions">
+					<button type="button" class="wansati-shop-filter-toggle" data-open-panel="wansati-shop-filters-panel" aria-controls="wansati-shop-filters-panel" aria-expanded="false">
+						<?php echo wansati_theme_get_icon_svg('menu'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span><?php esc_html_e('Filters', 'wansati'); ?></span>
+					</button>
+
+					<div class="wansati-shop-toolbar__count">
+						<?php woocommerce_result_count(); ?>
+					</div>
 				</div>
 				<div class="wansati-shop-toolbar__ordering">
 					<?php woocommerce_catalog_ordering(); ?>
@@ -108,8 +91,58 @@ if (is_tax('product_cat') || is_tax('product_tag')) {
 			<?php do_action('woocommerce_after_shop_loop'); ?>
 		</div>
 	</section>
+
+	<aside id="wansati-shop-filters-panel" class="wansati-panel wansati-panel--menu wansati-panel--filters" aria-hidden="true">
+		<div class="wansati-panel__dialog">
+			<div class="wansati-panel__header">
+				<div>
+					<p class="wansati-panel__eyebrow"><?php esc_html_e('Product Listing', 'wansati'); ?></p>
+					<h2 class="wansati-panel__title"><?php esc_html_e('Filters', 'wansati'); ?></h2>
+				</div>
+				<button type="button" class="wansati-panel__close" data-close-panel="wansati-shop-filters-panel">
+					<?php echo wansati_theme_get_icon_svg('close'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<span class="screen-reader-text"><?php esc_html_e('Close filters', 'wansati'); ?></span>
+				</button>
+			</div>
+
+			<div class="wansati-panel__body">
+				<?php
+				get_template_part(
+					'template-parts/components/shop-filters',
+					null,
+					array(
+						'current_term_id' => $current_term_id,
+						'featured_tags'   => $featured_tags,
+					)
+				);
+				?>
+			</div>
+
+			<div class="wansati-shop-filter-panel__footer">
+				<button type="button" class="wansati-button wansati-button--primary wansati-button--block" data-close-panel="wansati-shop-filters-panel">
+					<?php
+					printf(
+						esc_html(
+							/* translators: %d: number of products. */
+							_n('Show %d Product', 'Show %d Products', $total_products, 'wansati')
+						),
+						$total_products
+					);
+					?>
+				</button>
+			</div>
+		</div>
+	</aside>
 <?php else : ?>
-	<?php do_action('woocommerce_no_products_found'); ?>
+	<div class="wansati-empty-state wansati-empty-state--large wansati-shop-empty">
+		<p class="wansati-empty-state__eyebrow"><?php esc_html_e('No Matches', 'wansati'); ?></p>
+		<h2><?php esc_html_e('No products match this selection.', 'wansati'); ?></h2>
+		<p><?php esc_html_e('Try a broader search, browse a different collection, or return to the full shop.', 'wansati'); ?></p>
+		<div class="wansati-inline-actions">
+			<a class="wansati-button wansati-button--primary" href="<?php echo esc_url(wansati_theme_get_shop_url()); ?>"><?php esc_html_e('Browse All Products', 'wansati'); ?></a>
+		</div>
+		<?php do_action('woocommerce_no_products_found'); ?>
+	</div>
 <?php endif; ?>
 
 <?php

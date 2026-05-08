@@ -10,6 +10,16 @@ if (! defined('ABSPATH')) {
 }
 
 $footer_links = wansati_theme_get_footer_link_fallback();
+$shop_terms   = get_terms(
+	array(
+		'taxonomy'   => 'product_cat',
+		'hide_empty' => true,
+		'parent'     => 0,
+		'number'     => 6,
+		'orderby'    => 'count',
+		'order'      => 'DESC',
+	)
+);
 ?>
 <footer id="colophon" class="site-footer wansati-footer">
 	<div class="wansati-container">
@@ -37,20 +47,33 @@ $footer_links = wansati_theme_get_footer_link_fallback();
 			</div>
 
 			<div>
-				<h2><?php esc_html_e('Contact Us', 'wansati'); ?></h2>
+				<h2><?php esc_html_e('Shop Categories', 'wansati'); ?></h2>
+				<ul class="wansati-footer__links">
+					<?php if (! empty($shop_terms) && ! is_wp_error($shop_terms)) : ?>
+						<?php foreach ($shop_terms as $shop_term) : ?>
+							<?php $shop_term_link = get_term_link($shop_term); ?>
+							<?php if (! is_wp_error($shop_term_link)) : ?>
+								<li><a href="<?php echo esc_url($shop_term_link); ?>"><?php echo esc_html($shop_term->name); ?></a></li>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					<?php else : ?>
+						<li><a href="<?php echo esc_url(wansati_theme_get_collection_url('women')); ?>"><?php esc_html_e('Women', 'wansati'); ?></a></li>
+						<li><a href="<?php echo esc_url(wansati_theme_get_collection_url('men')); ?>"><?php esc_html_e('Men', 'wansati'); ?></a></li>
+						<li><a href="<?php echo esc_url(wansati_theme_get_collection_url('fragrances')); ?>"><?php esc_html_e('Fragrances', 'wansati'); ?></a></li>
+						<li><a href="<?php echo esc_url(wansati_theme_get_collection_url('body-care')); ?>"><?php esc_html_e('Body Care', 'wansati'); ?></a></li>
+					<?php endif; ?>
+				</ul>
+			</div>
+
+			<div>
+				<h2><?php esc_html_e('Contact Details', 'wansati'); ?></h2>
 				<div class="wansati-footer__contact">
 					<p><?php esc_html_e('Have questions or suggestions?', 'wansati'); ?></p>
 					<a href="mailto:info@wansatibrands.co.za">info@wansatibrands.co.za</a>
 					<p><?php esc_html_e('Need assistance? Give us a call.', 'wansati'); ?></p>
 					<a href="tel:+27676253986">+27 67 625 3986</a>
+					<p><?php esc_html_e('Room 914, Ottawa Mall, 94 Helen Joseph Street, Johannesburg, 2001', 'wansati'); ?></p>
 				</div>
-			</div>
-
-			<div>
-				<h2><?php esc_html_e('Visit Us', 'wansati'); ?></h2>
-				<p>
-					<?php esc_html_e('Room 914, Ottawa Mall, 94 Helen Joseph Street, Johannesburg, 2001', 'wansati'); ?>
-				</p>
 			</div>
 		</div>
 

@@ -60,14 +60,17 @@ $cart_count  = function_exists('WC') && WC()->cart ? WC()->cart->get_cart_conten
 					</button>
 					<a class="wansati-icon-button" href="<?php echo esc_url($account_url); ?>">
 						<?php echo wansati_theme_get_icon_svg('user'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span class="wansati-icon-button__label" aria-hidden="true"><?php esc_html_e('Account', 'wansati'); ?></span>
 						<span class="screen-reader-text"><?php esc_html_e('My account', 'wansati'); ?></span>
 					</a>
 					<button class="wansati-icon-button" type="button" data-open-panel="wansati-side-wishlist" aria-controls="wansati-side-wishlist" aria-expanded="false">
 						<?php echo wansati_theme_get_icon_svg('heart'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span class="wansati-icon-button__label" aria-hidden="true"><?php esc_html_e('Wishlist', 'wansati'); ?></span>
 						<span class="screen-reader-text"><?php esc_html_e('Open wishlist', 'wansati'); ?></span>
 					</button>
 					<button class="wansati-icon-button" type="button" data-open-panel="wansati-side-cart" aria-controls="wansati-side-cart" aria-expanded="false">
 						<?php echo wansati_theme_get_icon_svg('bag'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<span class="wansati-icon-button__label" aria-hidden="true"><?php esc_html_e('Cart', 'wansati'); ?></span>
 						<span class="wansati-icon-button__count" data-wansati-cart-count><?php echo esc_html((string) $cart_count); ?></span>
 						<span class="screen-reader-text"><?php esc_html_e('Open cart', 'wansati'); ?></span>
 					</button>

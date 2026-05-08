@@ -15,7 +15,7 @@
 	--wansati-shadow: 0 18px 40px rgba(41, 37, 36, 0.08);
 	--wansati-shadow-strong: 0 28px 60px rgba(41, 37, 36, 0.18);
 	--wansati-radius: 0;
-	--wansati-container: 1400px;
+	--wansati-container: 1280px;
 	--wansati-content: 1200px;
 	--wansati-header-height: 142px;
 	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -27,12 +27,25 @@ html {
 	scroll-behavior: smooth;
 }
 
+@media (min-width: 1024px) {
+	html {
+		font-size: 114%;
+	}
+}
+
+@media (min-width: 1280px) {
+	html {
+		font-size: 116%;
+	}
+}
+
 body {
 	margin: 0;
 	background: var(--wansati-bg);
 	color: var(--wansati-text);
 	font-family: var(--font-sans);
 	line-height: 1.5;
+	text-rendering: optimizeLegibility;
 }
 
 a {
@@ -73,6 +86,11 @@ button {
 	min-height: 100vh;
 }
 
+body.has-panel-open,
+body.has-search-open {
+	overflow: hidden;
+}
+
 .wansati-container {
 	width: min(calc(100% - 2rem), var(--wansati-container));
 	margin: 0 auto;
@@ -102,13 +120,23 @@ button {
 
 .wansati-button--primary {
 	position: relative;
-	background: var(--wansati-accent);
+	background-color: var(--wansati-accent);
+	background-image:
+		linear-gradient(115deg, rgba(255, 255, 255, 0) 28%, rgba(255, 249, 220, 0.32) 46%, rgba(255, 255, 255, 0.52) 50%, rgba(255, 255, 255, 0) 66%),
+		linear-gradient(180deg, #c8ab5b 0%, #b79647 100%);
+	background-position: 120% 0, 0 0;
+	background-size: 220% 100%, 100% 100%;
+	background-repeat: no-repeat;
 	color: #fff;
 	box-shadow: 0 12px 30px rgba(98, 76, 25, 0.2);
 }
 
 .wansati-button--primary:hover {
 	background: var(--wansati-accent-dark);
+	background-image:
+		linear-gradient(115deg, rgba(255, 255, 255, 0) 24%, rgba(255, 248, 213, 0.4) 46%, rgba(255, 255, 255, 0.54) 50%, rgba(255, 255, 255, 0) 68%),
+		linear-gradient(180deg, #b89849 0%, #a8893f 100%);
+	background-position: -25% 0, 0 0;
 	box-shadow: 0 18px 36px rgba(98, 76, 25, 0.28);
 }
 
@@ -128,8 +156,24 @@ button {
 	color: inherit;
 }
 
+.wansati-button--secondary:hover,
+.wansati-button--ghost:hover {
+	border-color: var(--wansati-ink);
+	background: var(--wansati-ink);
+	color: #fff;
+}
+
 .wansati-button--block {
 	width: 100%;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 2px solid rgba(194, 164, 83, 0.85);
+	outline-offset: 2px;
 }
 
 .wansati-icon {
@@ -182,7 +226,7 @@ button {
 }
 
 .wansati-home-section {
-	padding: 4.5rem 0;
+	padding: 5rem 0;
 }
 
 .wansati-home-section--accent {
@@ -195,8 +239,8 @@ button {
 	position: sticky;
 	top: 0;
 	z-index: 80;
-	background: rgba(252, 252, 249, 0.96);
-	backdrop-filter: blur(16px);
+	background: rgba(252, 252, 249, 0.94);
+	backdrop-filter: blur(18px);
 	border-bottom: 1px solid rgba(204, 195, 183, 0.78);
 	transition: transform 0.35s ease, box-shadow 0.35s ease, background-color 0.35s ease;
 }
@@ -219,7 +263,18 @@ button {
 	grid-template-columns: auto 1fr auto;
 	align-items: center;
 	gap: 1rem;
-	padding: 1rem 0 0.9rem;
+	padding: 1.15rem 0 1rem;
+}
+
+.wansati-brand,
+.wansati-brand .custom-logo-link {
+	display: inline-flex;
+	align-items: center;
+}
+
+.wansati-brand .custom-logo-link img {
+	width: auto;
+	max-height: 3.55rem;
 }
 
 .wansati-brand__wordmark {
@@ -247,7 +302,17 @@ button {
 	display: flex;
 	align-items: center;
 	border: 1px solid var(--wansati-border-strong);
-	background: rgba(255, 255, 255, 0.75);
+	background: rgba(255, 255, 255, 0.84);
+	box-shadow: 0 8px 22px rgba(41, 37, 36, 0.05);
+	transition: border-color 0.3s ease, box-shadow 0.35s ease, background-color 0.35s ease;
+}
+
+.wansati-header-search:focus-within,
+.wansati-newsletter__form label:focus-within,
+.wansati-search-form label:focus-within {
+	border-color: rgba(168, 138, 62, 0.72);
+	box-shadow: 0 0 0 3px rgba(194, 164, 83, 0.1), 0 18px 36px rgba(41, 37, 36, 0.08);
+	background: #fff;
 }
 
 .wansati-header-search label,
@@ -280,16 +345,19 @@ button {
 .wansati-header__actions {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.7rem;
 }
 
 .wansati-icon-button {
 	position: relative;
 	display: inline-flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 2.9rem;
-	height: 2.9rem;
+	gap: 0.24rem;
+	width: 3.6rem;
+	min-height: 3.25rem;
+	padding: 0.2rem 0.3rem;
 	border: 1px solid transparent;
 	background: transparent;
 	color: var(--wansati-ink);
@@ -304,10 +372,10 @@ button {
 
 .wansati-icon-button__count {
 	position: absolute;
-	top: 0.4rem;
-	right: 0.35rem;
-	min-width: 1rem;
-	padding: 0.05rem 0.2rem;
+	top: 0.15rem;
+	right: 0.2rem;
+	min-width: 1.05rem;
+	padding: 0.08rem 0.2rem;
 	border-radius: 999px;
 	background: var(--wansati-accent);
 	color: #fff;
@@ -317,10 +385,18 @@ button {
 	text-align: center;
 }
 
+.wansati-icon-button__label {
+	font-size: 0.56rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: #6a6258;
+}
+
 .wansati-nav {
 	display: flex;
 	justify-content: center;
-	padding: 0.25rem 0 1rem;
+	padding: 0.35rem 0 1rem;
 }
 
 .wansati-nav__list {
@@ -328,7 +404,7 @@ button {
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	gap: 1.8rem;
+	gap: 2rem;
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -343,15 +419,36 @@ button {
 }
 
 .wansati-nav__link {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
-	padding: 0.2rem 0;
+	padding: 0.2rem 0 0.45rem;
 	color: var(--wansati-ink);
-	font-size: 0.78rem;
-	font-weight: 500;
-	letter-spacing: 0.12em;
+	font-size: 0.76rem;
+	font-weight: 600;
+	letter-spacing: 0.15em;
 	text-transform: uppercase;
+}
+
+.wansati-nav__link::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	width: 1.5rem;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, var(--wansati-accent), transparent);
+	opacity: 0;
+	transform: translateX(-50%) scaleX(0.3);
+	transform-origin: center;
+	transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wansati-nav__item:hover .wansati-nav__link::after,
+.wansati-nav__item:focus-within .wansati-nav__link::after {
+	opacity: 1;
+	transform: translateX(-50%) scaleX(1);
 }
 
 .wansati-nav__chevron {
@@ -365,7 +462,7 @@ button {
 	left: 50%;
 	transform: translateX(-50%);
 	width: min(88vw, 860px);
-	padding-top: 1.25rem;
+	padding-top: 1.35rem;
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
@@ -382,9 +479,22 @@ button {
 
 .wansati-mega-menu__inner {
 	border: 1px solid var(--wansati-border);
-	background: #fff;
-	padding: 1.85rem 2rem;
+	background:
+		linear-gradient(180deg, rgba(252, 250, 245, 0.72), rgba(255, 255, 255, 1) 22%),
+		#fff;
+	padding: 2rem 2.2rem;
 	box-shadow: var(--wansati-shadow-strong);
+}
+
+.wansati-mega-menu__eyebrow {
+	margin: 0;
+	padding-bottom: 0.95rem;
+	border-bottom: 1px solid rgba(204, 195, 183, 0.56);
+	font-size: 0.64rem;
+	font-weight: 700;
+	letter-spacing: 0.24em;
+	text-transform: uppercase;
+	color: #8b765e;
 }
 
 .wansati-mega-menu__links {
@@ -402,7 +512,7 @@ button {
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
-	padding: 0.55rem 0;
+	padding: 0.65rem 0;
 	color: var(--wansati-text);
 	transition: color 0.3s ease, transform 0.3s ease;
 }
@@ -415,7 +525,7 @@ button {
 
 .wansati-mega-menu__shop-all {
 	display: inline-block;
-	margin-top: 1.5rem;
+	margin-top: 1.6rem;
 	font-size: 0.72rem;
 	font-weight: 700;
 	letter-spacing: 0.16em;
@@ -457,7 +567,9 @@ button {
 }
 
 .wansati-hero__overlay {
-	background: rgba(0, 0, 0, 0.3);
+	background:
+		linear-gradient(180deg, rgba(14, 13, 12, 0.18) 0%, rgba(14, 13, 12, 0.42) 100%),
+		radial-gradient(circle at top right, rgba(194, 164, 83, 0.2), transparent 34%);
 }
 
 .wansati-hero__content {
@@ -468,7 +580,7 @@ button {
 	align-items: center;
 	justify-content: center;
 	min-height: max(76vh, 620px);
-	padding-top: 4rem;
+	padding-top: 5rem;
 	padding-bottom: 5rem;
 	text-align: center;
 	color: #fff;
@@ -500,7 +612,7 @@ button {
 }
 
 .wansati-hero .wansati-inline-actions {
-	margin-top: 2rem;
+	margin-top: 2.35rem;
 	justify-content: center;
 }
 
@@ -564,7 +676,7 @@ button {
 
 .wansati-collection-card__image-wrap {
 	position: relative;
-	margin: 1rem;
+	margin: 1.1rem;
 	aspect-ratio: 4 / 5;
 	overflow: hidden;
 	background: #ebe7df;
@@ -605,7 +717,7 @@ button {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 1rem 1.25rem;
+	padding: 0 1.1rem 1.45rem;
 	text-align: center;
 }
 
@@ -763,6 +875,7 @@ button {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
+	gap: 0.1rem;
 }
 
 .wansati-product-card__taxonomy {
@@ -779,9 +892,11 @@ button {
 }
 
 .wansati-product-card__title {
-	margin: 0 0 0.35rem;
-	font-size: 0.92rem;
+	margin: 0 0 0.3rem;
+	min-height: 2.5rem;
+	font-size: 0.9rem;
 	font-weight: 500;
+	line-height: 1.4;
 	color: #2d2a26;
 }
 
@@ -790,15 +905,20 @@ button {
 }
 
 .wansati-product-card__price {
-	margin-bottom: 1rem;
+	margin-bottom: 0.85rem;
 	color: #756b61;
-	font-size: 0.9rem;
+	font-size: 0.88rem;
 	font-weight: 600;
 }
 
 .wansati-product-card__price del {
 	margin-right: 0.4rem;
 	opacity: 0.7;
+}
+
+.wansati-product-card__price ins {
+	color: #1c1a17;
+	text-decoration: none;
 }
 
 .wansati-product-card__stock {
@@ -817,6 +937,12 @@ button {
 
 .wansati-product-card__actions {
 	margin-top: auto;
+}
+
+.wansati-product-card__actions .button {
+	padding: 0.95rem 1.2rem;
+	font-size: 0.6rem;
+	letter-spacing: 0.22em;
 }
 
 .wansati-brand-story {
@@ -934,15 +1060,15 @@ button {
 }
 
 .wansati-footer {
-	padding: 4.5rem 0 2rem;
+	padding: 4.8rem 0 2rem;
 	background: #0f0f0f;
 	color: #fff;
 }
 
 .wansati-footer__grid {
 	display: grid;
-	grid-template-columns: 1.2fr 1fr 1fr 1fr;
-	gap: 2rem;
+	grid-template-columns: minmax(0, 1.15fr) repeat(3, minmax(0, 1fr));
+	gap: 2.2rem;
 	padding-bottom: 3rem;
 }
 
@@ -952,12 +1078,22 @@ button {
 	font-weight: 700;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
+	color: #f4efe4;
 }
 
 .wansati-footer p,
 .wansati-footer li,
 .wansati-footer a {
 	color: #b7b7b7;
+}
+
+.wansati-footer__brand p {
+	max-width: 18rem;
+	line-height: 1.7;
+}
+
+.wansati-brand--footer .custom-logo-link img {
+	max-height: 4rem;
 }
 
 .wansati-footer__links {
@@ -968,6 +1104,20 @@ button {
 
 .wansati-footer__links li + li {
 	margin-top: 0.55rem;
+}
+
+.wansati-footer__contact {
+	display: grid;
+	gap: 0.65rem;
+}
+
+.wansati-footer__contact p {
+	margin: 0;
+}
+
+.wansati-footer__contact a {
+	font-size: 0.98rem;
+	color: #f3eee2;
 }
 
 .wansati-footer__links a:hover,
@@ -1011,7 +1161,9 @@ button {
 	position: relative;
 	overflow: hidden;
 	border-bottom: 1px solid var(--wansati-border);
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(244, 236, 223, 0.9));
+	background:
+		radial-gradient(circle at top right, rgba(194, 164, 83, 0.18), transparent 34%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(244, 236, 223, 0.9));
 }
 
 .wansati-page-hero .wansati-container {
@@ -1036,7 +1188,7 @@ button {
 }
 
 .wansati-content-card {
-	padding: 1.8rem;
+	padding: 2rem;
 	border: 1px solid var(--wansati-border);
 	background: #fff;
 	box-shadow: var(--wansati-shadow);
@@ -1111,7 +1263,7 @@ button {
 }
 
 .wansati-empty-state {
-	padding: 2rem;
+	padding: 2.3rem;
 	border: 1px solid var(--wansati-border);
 	background: var(--wansati-surface-soft);
 	text-align: center;
@@ -1129,7 +1281,8 @@ button {
 	display: flex;
 	justify-content: flex-end;
 	padding: 0;
-	background: rgba(15, 15, 15, 0.45);
+	background: rgba(15, 15, 15, 0.5);
+	backdrop-filter: blur(4px);
 	opacity: 0;
 	visibility: hidden;
 	pointer-events: none;
@@ -1151,15 +1304,21 @@ button {
 
 .wansati-search-overlay__inner {
 	width: min(100%, 58rem);
-	margin: 4rem auto auto;
-	padding: 1.5rem;
+	margin: 5rem auto auto;
+	padding: 1.6rem;
+	transform: translateY(-1rem);
+	transition: transform 0.3s ease;
+}
+
+.wansati-search-overlay.is-active .wansati-search-overlay__inner {
+	transform: translateY(0);
 }
 
 .wansati-panel--menu .wansati-panel__dialog,
 .wansati-panel--side .wansati-panel__dialog {
-	width: min(100%, 28rem);
+	width: min(100%, 29rem);
 	height: 100%;
-	padding: 1.35rem;
+	padding: 1.35rem 1.35rem 1.5rem;
 	overflow: auto;
 	transform: translateX(100%);
 	transition: transform 0.28s ease;
@@ -1190,10 +1349,23 @@ button {
 	border: 1px solid var(--wansati-border);
 	background: transparent;
 	color: var(--wansati-ink);
+	transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.wansati-panel__close:hover {
+	transform: translateY(-1px);
+	border-color: var(--wansati-ink);
 }
 
 .wansati-panel__body {
 	padding-top: 1.25rem;
+}
+
+.wansati-panel__title {
+	margin: 0.35rem 0 0;
+	font-family: var(--font-serif);
+	font-size: 2rem;
+	color: var(--wansati-ink);
 }
 
 .wansati-mobile-nav__list,

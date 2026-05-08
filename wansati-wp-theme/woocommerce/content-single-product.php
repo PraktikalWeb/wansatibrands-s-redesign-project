@@ -29,6 +29,17 @@ if (post_password_required()) {
 
 			<?php do_action('woocommerce_single_product_summary'); ?>
 
+			<div class="wansati-single-product__secondary-actions">
+				<button type="button" class="wansati-button wansati-button--secondary" data-open-panel="wansati-side-wishlist" aria-controls="wansati-side-wishlist" aria-expanded="false">
+					<?php echo wansati_theme_get_icon_svg('heart'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<span><?php esc_html_e('Save for later', 'wansati'); ?></span>
+				</button>
+				<a class="wansati-button wansati-button--ghost" href="<?php echo esc_url(home_url('/contact/')); ?>">
+					<?php echo wansati_theme_get_icon_svg('arrow-right'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<span><?php esc_html_e('Need help?', 'wansati'); ?></span>
+				</a>
+			</div>
+
 			<div class="wansati-single-product__assurance">
 				<div class="wansati-single-product__assurance-item">
 					<?php echo wansati_theme_get_icon_svg('truck'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

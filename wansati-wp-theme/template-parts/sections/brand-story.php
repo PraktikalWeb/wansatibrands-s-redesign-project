@@ -12,6 +12,7 @@ if (! defined('ABSPATH')) {
 <section class="wansati-brand-story">
 	<div class="wansati-container wansati-brand-story__grid">
 		<div class="wansati-brand-story__media">
+			<?php // TODO: Replace this remote fallback image with a Media Library asset or theme option. ?>
 			<img src="https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6474-scaled.jpg" alt="<?php esc_attr_e('The Wansati woman', 'wansati'); ?>">
 		</div>
 		<div class="wansati-brand-story__content">

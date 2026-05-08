@@ -9,6 +9,8 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
+// TODO: Replace these remote fallback hero images with Media Library attachments
+// or theme-managed assets once staging content is finalized.
 $hero_images = array(
 	'https://www.wansatibrands.co.za/wp-content/uploads/2025/10/DSC_6563-scaled.jpg',
 	'https://www.wansatibrands.co.za/wp-content/uploads/2025/09/DSC_6469-scaled.jpg',
