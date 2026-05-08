@@ -1,0 +1,20 @@
+/*
+Theme Name: Wansati Brands Redesign
+Theme URI: https://www.wansatibrands.co.za/
+Author: OpenAI Codex
+Author URI: https://openai.com/
+Description: Phase 1 custom classic WordPress and WooCommerce theme scaffold for the Wansati Brands redesign, built from the React/Vite design reference while preserving native WooCommerce flows and plugin compatibility.
+Version: 0.1.0
+Requires at least: 6.5
+Requires PHP: 8.1
+Tested up to: 6.8
+Text Domain: wansati
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Tags: ecommerce, custom-logo, featured-images, responsive-layout, threaded-comments, translation-ready, woocommerce
+*/
+
+/*
+ * Phase 1 note:
+ * The main theme styling lives in assets/css/.
+ */

@@ -1,0 +1,171 @@
+@media (max-width: 1200px) {
+	.wansati-collection-grid--six,
+	.woocommerce ul.products,
+	.woocommerce-page ul.products,
+	.wansati-product-grid,
+	.wansati-post-grid,
+	.wansati-search-results__grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 1024px) {
+	.admin-bar .wansati-header {
+		top: 46px;
+	}
+
+	.wansati-header__top {
+		grid-template-columns: auto 1fr auto;
+	}
+
+	.wansati-header__mobile-toggle {
+		display: inline-flex;
+	}
+
+	.wansati-header-search--desktop,
+	.wansati-nav--desktop {
+		display: none;
+	}
+
+	.wansati-collection-grid--six,
+	.wansati-collection-grid--three,
+	.wansati-product-grid,
+	.wansati-post-grid,
+	.wansati-search-results__grid,
+	.wansati-footer__grid,
+	.wansati-brand-story__grid,
+	.single-product .product,
+	.wansati-single-product__main,
+	.wansati-cart-layout,
+	.wansati-checkout-layout,
+	.wansati-account-layout,
+	.wansati-shop-layout,
+	.wansati-thankyou-layout,
+	.woocommerce ul.products,
+	.woocommerce-page ul.products {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.single-product .product,
+	.wansati-single-product__main,
+	.wansati-brand-story__grid,
+	.wansati-footer__grid,
+	.wansati-cart-layout,
+	.wansati-checkout-layout,
+	.wansati-account-layout,
+	.wansati-shop-layout,
+	.wansati-thankyou-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.wansati-trust-badges__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.wansati-footer__payments,
+	.wansati-footer__subfooter,
+	.wansati-product-section__header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.wansati-shop-sidebar,
+	.wansati-single-product__summary,
+	.wansati-cart-totals,
+	.wansati-checkout-sidebar,
+	.wansati-account-sidebar {
+		position: static;
+		top: auto;
+	}
+}
+
+@media (max-width: 782px) {
+	.admin-bar .wansati-header {
+		top: 46px;
+	}
+}
+
+@media (max-width: 767px) {
+	html {
+		font-size: 104%;
+	}
+
+	.wansati-container {
+		width: min(calc(100% - 1.25rem), var(--wansati-container));
+	}
+
+	.wansati-home-section,
+	.wansati-brand-story,
+	.wansati-newsletter {
+		padding: 3.2rem 0;
+	}
+
+	.wansati-hero,
+	.wansati-hero__content {
+		min-height: max(66vh, 560px);
+	}
+
+	.wansati-hero h1 {
+		max-width: 9ch;
+	}
+
+	.wansati-collection-grid--six,
+	.wansati-collection-grid--three,
+	.wansati-product-grid,
+	.wansati-post-grid,
+	.wansati-search-results__grid,
+	.wansati-trust-badges__grid,
+	.woocommerce ul.products,
+	.woocommerce-page ul.products {
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+
+	.wansati-newsletter__form,
+	.wansati-search-form {
+		flex-direction: column;
+	}
+
+	.wansati-footer__legal {
+		gap: 0.6rem 1rem;
+	}
+
+	.woocommerce table.shop_table th,
+	.woocommerce table.shop_table td {
+		padding: 0.75rem;
+	}
+}
+
+@media (max-width: 540px) {
+	.wansati-header__actions {
+		gap: 0.2rem;
+	}
+
+	.wansati-icon-button {
+		width: 2.55rem;
+		height: 2.55rem;
+	}
+
+	.wansati-collection-grid--six,
+	.wansati-collection-grid--three,
+	.wansati-product-grid,
+	.wansati-post-grid,
+	.wansati-search-results__grid,
+	.woocommerce ul.products,
+	.woocommerce-page ul.products {
+		grid-template-columns: 1fr;
+	}
+
+	.wansati-trust-badges__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.wansati-footer__payment-logos {
+		flex-wrap: wrap;
+	}
+
+	.wansati-panel--menu .wansati-panel__dialog,
+	.wansati-panel--side .wansati-panel__dialog {
+		width: 100%;
+	}
+}
