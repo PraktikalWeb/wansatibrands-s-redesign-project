@@ -32,7 +32,7 @@ export default function BlackFridayEmailPage() {
           className="block h-[min(80vh,64rem)] min-h-96 w-full rounded-xl border border-stone-300 bg-[#f6f2e9]"
         />
         <p className="mt-4 text-xs leading-relaxed text-stone-600">
-          Replace <code>{'{{unsubscribe_url}}'}</code> with your email platform’s unsubscribe tag before sending.
+          The unsubscribe link opens the WordPress.com subscription manager for Wansati’s Jetpack subscribers.
         </p>
       </div>
     </section>
