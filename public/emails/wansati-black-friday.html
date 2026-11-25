@@ -12,11 +12,19 @@
         .hero-title { font-size: 42px !important; }
         .hero-logo { width: 110px !important; }
         .letter { padding: 24px 14px 28px !important; }
+        .unsubscribe-card { padding: 24px 50px 20px 32px !important; }
+        .unsubscribe-title { font-size: 22px !important; }
+      }
+      @media only screen and (max-width: 480px) {
+        .unsubscribe-card { background-position: left center !important; background-size: 125% 100% !important; }
+        .unsubscribe-title { font-size: 20px !important; }
       }
       @media only screen and (max-width: 380px) {
         .hero-copy { padding: 17px 6px 17px 13px !important; }
         .hero-title { font-size: 34px !important; }
         .shop-link { padding-right: 15px !important; padding-left: 15px !important; }
+        .unsubscribe-card { padding-right: 45px !important; padding-left: 20px !important; }
+        .unsubscribe-title { font-size: 17px !important; }
       }
     </style>
   </head>
@@ -101,11 +109,20 @@
             </tr>
 
             <tr>
-              <td align="center" bgcolor="#151311" style="padding:18px 19px;border-radius:18px;color:#f6f2e9;">
-                <p style="margin:0 0 8px;color:#d8c79d;font-size:11px;line-height:1.6;">
-                  Wansati Brands &middot; Room 914, Ottawa Mall, 94 Helen Joseph Street, Johannesburg, 2001
+              <td class="unsubscribe-card" align="center" bgcolor="#d6b665" background="https://www.wansatibrands.co.za/wp-content/themes/wansati-brands-size-guide-update/assets/reference-ribbon-C3U2F0AG.jpg" style="padding:29px 68px 22px;border-radius:20px;background-color:#d6b665;background-image:url('https://www.wansatibrands.co.za/wp-content/themes/wansati-brands-size-guide-update/assets/reference-ribbon-C3U2F0AG.jpg');background-repeat:no-repeat;background-position:center right;background-size:cover;color:#191611;">
+                <h2 class="unsubscribe-title" style="margin:0 0 7px;color:#191611;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:700;line-height:1.15;">
+                  EMAIL PREFERENCES
+                </h2>
+                <p style="margin:0 0 11px;font-size:13px;line-height:1.45;">
+                  You’re receiving this email from Wansati Brands.
                 </p>
-                <a href="{{unsubscribe_url}}" style="color:#f4dc93;font-size:11px;text-decoration:underline;">Unsubscribe</a>
+                <p style="margin:0 0 16px;font-size:13px;font-weight:700;line-height:1.45;">
+                  <a href="{{unsubscribe_url}}" style="color:#191611;text-decoration:underline;text-underline-offset:3px;">Unsubscribe</a>&nbsp; &rarr;
+                </p>
+                <p style="margin:0;font-size:11px;line-height:1.5;">
+                  Wansati Brands &middot; Room 914, Ottawa Mall<br>
+                  94 Helen Joseph Street, Johannesburg, 2001
+                </p>
               </td>
             </tr>
           </table>
