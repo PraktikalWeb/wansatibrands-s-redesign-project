@@ -13,7 +13,7 @@ export default function BlackFridayEmailPage() {
             <h1 className="font-serif text-3xl text-[#191611] sm:text-4xl">Black Friday email preview</h1>
             <p className="mt-3 text-sm leading-relaxed text-stone-700">
               <span className="font-semibold">Subject</span>{' '}
-              BLACK FRIDAY IS HERE AT WANSATI!
+              Black Friday is here at Wansati! | Up to 15% off this Friday
             </p>
           </div>
           <a
