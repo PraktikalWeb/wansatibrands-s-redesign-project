@@ -40,6 +40,7 @@ import NotFoundPage from './NotFoundPage';
 import ProductListingPage from './ProductListingPage';
 import ContactPage from './ContactPage';
 import AboutPage from './AboutPage';
+import BlackFridayEmailPage, { blackFridayEmailPath } from './BlackFridayEmailPage';
 import BlogPage from './BlogPage';
 import BlogArticlePage from './BlogArticlePage';
 import AuthPage from './AuthPage';
@@ -328,6 +329,7 @@ export default function App() {
   const isProductPage = currentPath === '/product' || currentPath.startsWith('/product/');
   const isCollectionPage = currentPath === '/collections' || currentPath.startsWith('/collections/');
   const isAboutPage = currentPath === '/about' || currentPath === '/about/';
+  const isBlackFridayEmailPage = currentPath === blackFridayEmailPath || currentPath === `${blackFridayEmailPath}/`;
   const isAuthPage =
     currentPath === '/my-account' ||
     currentPath === '/my-account/' ||
@@ -363,6 +365,7 @@ export default function App() {
       !isProductPage &&
       !isCollectionPage &&
       !isAboutPage &&
+      !isBlackFridayEmailPage &&
       !isAuthPage &&
       !isBlogArticlePage &&
       !isBlogPage &&
@@ -1652,6 +1655,8 @@ export default function App() {
           />
         ) : isAboutPage ? (
           <AboutPage navigateTo={navigateTo} />
+        ) : isBlackFridayEmailPage ? (
+          <BlackFridayEmailPage />
         ) : isLostPasswordPage ? (
           <LostPasswordPage navigateTo={navigateTo} mode="request" />
         ) : isResetPasswordPage ? (
@@ -3090,6 +3095,19 @@ export default function App() {
                 <li><button type="button" onClick={() => navigateTo('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button></li>
                 <li><button type="button" onClick={() => navigateTo('/terms-and-conditions')} className="hover:text-white transition-colors">Terms & Conditions</button></li>
                 <li><button type="button" onClick={() => navigateTo('/returns-policy')} className="hover:text-white transition-colors">Returns Policy</button></li>
+                <li>
+                  <a
+                    href={blackFridayEmailPath}
+                    onClick={(event) => {
+                      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                      event.preventDefault();
+                      navigateTo(blackFridayEmailPath);
+                    }}
+                    className="hover:text-white transition-colors"
+                  >
+                    Black Friday Email Preview
+                  </a>
+                </li>
               </ul>
             </div>
 
